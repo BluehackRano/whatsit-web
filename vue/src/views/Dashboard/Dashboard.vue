@@ -33,13 +33,13 @@
       <button type="button" class="btn btn-youtube btn-md text" @click="addImage"><i class="fa fa-check fa-lg mt-4"></i></button>
     </div>
 
-    <br/><br/>
+    <br/>
 
-    <img
-      :src="cropImg"
-      style="object-fit:contain; width: 500px; height: 300px; border: 1px solid gray;"
-      alt="Please crop the above image."
-    />
+    <!--<img-->
+      <!--:src="cropImg"-->
+      <!--style="object-fit:contain; width: 500px; height: 300px; border: 1px solid gray;"-->
+      <!--alt="Please crop the above image."-->
+    <!--/>-->
     <p> X : {{ cropImgX }} / Y : {{ cropImgY }} / Width : {{ cropImgWidth }} / Height : {{ cropImgHeight }} </p>
 
 </div>
