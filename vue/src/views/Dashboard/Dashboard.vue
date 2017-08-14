@@ -119,6 +119,10 @@ export default {
     max-width: 100%; /* This rule is very important, please do not ignore this! */
   }
 
+  .wrapper {
+    width: 1200px !important; /* Width size guides needed ! */
+  }
+
   #bg_canvas {
     pointer-events: none;
   }
