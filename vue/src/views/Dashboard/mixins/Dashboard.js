@@ -74,6 +74,8 @@ export const Dashboard = {
     },
 
     addImage () {
+      this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL()
+
       if (this.cropImg === undefined || this.cropImg === null || this.cropImg === '') {
         return
       }

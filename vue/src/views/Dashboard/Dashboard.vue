@@ -93,7 +93,7 @@ export default {
       this.hideDivAddImg(true)
 
       // get image data for post processing, e.g. upload or setting image src
-      this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL()
+      // this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL()
       this.cropImgX = Math.round(this.$refs.cropper.getData().x)
       this.cropImgY = Math.round(this.$refs.cropper.getData().y)
       this.cropImgWidth = Math.round(this.$refs.cropper.getData().width)
@@ -113,7 +113,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+
   img {
     max-width: 100%; /* This rule is very important, please do not ignore this! */
   }
