@@ -67,3 +67,16 @@ export default {
 
 }
 </script>
+
+<style scoped>
+  @media (min-width: 992px) {
+    .aside-menu {
+
+    }
+  }
+  @media (max-width: 991px) {
+    .aside-menu {
+      margin-right: 0px;
+    }
+  }
+</style>
