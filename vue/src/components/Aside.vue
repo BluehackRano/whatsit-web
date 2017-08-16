@@ -22,7 +22,7 @@
 
       <div class="tab-pane active" id="timeline" role="tabpanel">
 
-        <div class="callout m-0 py-4 text-muted text-center bg-faded text-uppercase">
+        <div class="callout m-0 py-1 text-muted text-center bg-faded text-uppercase">
           <small><b>메모</b>
           </small>
         </div>
@@ -36,7 +36,7 @@
         <hr class="transparent m-0 py-0">
 
         <hr class="transparent mx-3 my-0">
-        <div class="callout m-0 py-4 text-muted text-center bg-faded text-uppercase">
+        <div class="callout m-0 py-1 text-muted text-center bg-faded text-uppercase">
           <small><b>작업목록</b>
           </small>
         </div>

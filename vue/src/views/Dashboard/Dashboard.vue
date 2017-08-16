@@ -29,8 +29,8 @@
     </div>
 
     <div id="div_add_img" style="display: none; visibility: hidden; position: absolute; z-index: 3;">
-      <button type="button" class="btn btn-outline-secondary btn-md active" @click="resetCanvas"><i class="fa fa-close fa-lg mt-4"></i></button>
-      <button type="button" class="btn btn-youtube btn-md text" @click="addImage"><i class="fa fa-check fa-lg mt-4"></i></button>
+      <button type="button" class="btn btn-outline-secondary btn-md active" @click="resetCanvas"><i class="fa fa-close fa-lg"></i></button>
+      <button type="button" class="btn btn-youtube btn-md text" @click="addImage"><i class="fa fa-check fa-lg"></i></button>
     </div>
 
     <br/>

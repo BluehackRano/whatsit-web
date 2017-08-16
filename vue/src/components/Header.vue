@@ -6,15 +6,15 @@
       <li class="nav-item">
         <a class="nav-link navbar-toggler sidebar-toggler" href="#" @click="sidebarToggle">&#9776;</a>
       </li>
-      <li class="nav-item px-3">
-        <a class="nav-link" href="#">Dashboard</a>
-      </li>
-      <li class="nav-item px-3">
-        <a class="nav-link" href="#">Users</a>
-      </li>
-      <li class="nav-item px-3">
-        <a class="nav-link" href="#">Settings</a>
-      </li>
+      <!--<li class="nav-item px-3">-->
+        <!--<a class="nav-link" href="#">Dashboard</a>-->
+      <!--</li>-->
+      <!--<li class="nav-item px-3">-->
+        <!--<a class="nav-link" href="#">Users</a>-->
+      <!--</li>-->
+      <!--<li class="nav-item px-3">-->
+        <!--<a class="nav-link" href="#">Settings</a>-->
+      <!--</li>-->
     </ul>
     <ul class="nav navbar-nav ml-auto">
       <dropdown size="nav" class="nav-item">
