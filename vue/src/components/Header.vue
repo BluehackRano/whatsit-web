@@ -27,8 +27,8 @@
           <a @click="logout" class="dropdown-item" href="#"><i class="fa fa-lock"></i> Logout</a>
         </div>
       </dropdown>
-      <li class="nav-item d-md-down-none">
-        <a class="nav-link navbar-toggler aside-menu-toggler" href="#" @click="asideToggle">&#9776;</a>
+      <li>
+        <span> &nbsp; </span>
       </li>
     </ul>
   </navbar>
@@ -65,11 +65,12 @@ export default {
     mobileSidebarToggle (e) {
       e.preventDefault()
       document.body.classList.toggle('sidebar-mobile-show')
-    },
-    asideToggle (e) {
-      e.preventDefault()
-      document.body.classList.toggle('aside-menu-hidden')
     }
+//    ,
+//    asideToggle (e) {
+//      e.preventDefault()
+//      document.body.classList.toggle('aside-menu-hidden')
+//    }
   }
 }
 
