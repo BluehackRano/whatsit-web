@@ -1,7 +1,7 @@
 //
 // RTL Support
 //
-
+// scss-lint:disable NestingDepth, SelectorDepth
 *[dir="rtl"] {
   direction: rtl;
   unicode-bidi: embed;
@@ -12,10 +12,6 @@
 
   table tr th {
     text-align: right;
-  }
-
-  .app-body {
-
   }
 
   // Breadcrumb
@@ -45,22 +41,22 @@
   }
 
   //
-  // LeftMenu
+  // Sidebar
   //
-  .leftmenu-hidden {
+  .sidebar-hidden {
 
-    .leftmenu {
-      margin-right: - $leftmenu-width;
+    .sidebar {
+      margin-right: - $sidebar-width;
     }
   }
 
-  .leftmenu-fixed {
+  .sidebar-fixed {
 
     .main, .app-footer {
-      margin-right: $leftmenu-width;
+      margin-right: $sidebar-width;
     }
 
-    &.leftmenu-hidden {
+    &.sidebar-hidden {
 
       .main, .app-footer {
         margin-right: 0;
@@ -68,25 +64,25 @@
     }
   }
 
-  .leftmenu-compact {
-    .leftmenu {
-      flex: 0 0 $leftmenu-compact-width;
+  .sidebar-minimized {
+    .sidebar {
+      flex: 0 0 $sidebar-minimized-width;
     }
 
-    &.leftmenu-hidden {
+    &.sidebar-hidden {
 
-      .leftmenu {
-        margin-left: - $leftmenu-compact-width;
+      .sidebar {
+        margin-left: - $sidebar-minimized-width;
       }
     }
 
-    &.leftmenu-fixed {
+    &.sidebar-fixed {
 
       .main, .app-footer {
-        margin-left: $leftmenu-compact-width;
+        margin-left: $sidebar-minimized-width;
       }
 
-      &.leftmenu-hidden {
+      &.sidebar-hidden {
 
         .main, .app-footer {
           margin-left: 0;
@@ -130,7 +126,7 @@
     .aside-menu {
       position: fixed;
       right: 0;
-      z-index: $zindex-navbar - 1;
+      z-index: $zindex-sticky - 1;
       height: 100%;
 
       .tab-content {
@@ -139,9 +135,9 @@
     }
   }
 
-  // LeftMenu Menu
-  .leftmenu {
-    .leftmenu-nav {
+  // Sidebar Menu
+  .sidebar {
+    .sidebar-nav {
       direction: ltr;
       * {
         direction: rtl;
@@ -161,14 +157,13 @@
               &::before {
                 position: absolute;
                 right: auto !important;
-                left: $leftmenu-nav-link-padding-x;
+                left: $sidebar-nav-link-padding-x;
               }
             }
           }
           &.nav-dropdown {
             &.open {
               > .nav-link.nav-dropdown-toggle::before {
-                -webkit-transform: rotate(90deg);
                 transform: rotate(90deg);
               }
             }
@@ -199,7 +194,7 @@
 
         i {
           margin-right: 5px;
-          margin-left: $spacer-x;
+          margin-left: $spacer;
         }
 
         .value {

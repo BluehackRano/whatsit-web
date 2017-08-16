@@ -1,10 +1,19 @@
 <template>
   <navbar>
-    <button class="navbar-toggler mobile-leftmenu-toggler d-lg-none" type="button" @click="mobileLeftMenuToggle">&#9776;</button>
+    <button class="navbar-toggler mobile-sidebar-toggler d-lg-none" type="button" @click="mobileSidebarToggle">&#9776;</button>
     <a class="navbar-brand" href="#"></a>
     <ul class="nav navbar-nav d-md-down-none">
       <li class="nav-item">
-        <a class="nav-link navbar-toggler leftmenu-toggler" href="#" @click="leftmenuToggle">&#9776;</a>
+        <a class="nav-link navbar-toggler sidebar-toggler" href="#" @click="sidebarToggle">&#9776;</a>
+      </li>
+      <li class="nav-item px-3">
+        <a class="nav-link" href="#">Dashboard</a>
+      </li>
+      <li class="nav-item px-3">
+        <a class="nav-link" href="#">Users</a>
+      </li>
+      <li class="nav-item px-3">
+        <a class="nav-link" href="#">Settings</a>
       </li>
     </ul>
     <ul class="nav navbar-nav ml-auto">
@@ -49,13 +58,13 @@ export default {
     click () {
       // do nothing..
     },
-    leftmenuToggle (e) {
+    sidebarToggle (e) {
       e.preventDefault()
-      document.body.classList.toggle('leftmenu-hidden')
+      document.body.classList.toggle('sidebar-hidden')
     },
-    mobileLeftMenuToggle (e) {
+    mobileSidebarToggle (e) {
       e.preventDefault()
-      document.body.classList.toggle('leftmenu-mobile-show')
+      document.body.classList.toggle('sidebar-mobile-show')
     },
     asideToggle (e) {
       e.preventDefault()

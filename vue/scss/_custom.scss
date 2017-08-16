@@ -3,10 +3,10 @@ header.navbar > .img-avatar {
     margin: -3px 10px 0 10px;
 }
 
-nav.leftmenu-nav {
+nav.sidebar-nav {
     .form-control {
         border: 0;
-        background: darken($leftmenu-bg,10%);
+        background: darken($sidebar-bg,10%);
         color: #fff;
 
         &::-webkit-input-placeholder { color: rgba(255,255,255,.7); }

@@ -23,41 +23,6 @@ $brand-danger:              #ff5454;
 $enable-transitions:        true;
 $enable-rounded:            true;
 
-// Spacing
-//
-// Control the default styling of most Bootstrap elements by modifying these
-// variables. Mostly focused on spacing.
-
-$spacer:   1rem !default;
-$spacer-x: $spacer !default;
-$spacer-y: $spacer !default;
-$spacers: (
-  q: (
-    x:   ($spacer-x * 0.25),
-    y:   ($spacer-y * 0.25)
-  ),
-  h: (
-    x:   ($spacer-x * 0.5),
-    y:   ($spacer-y * 0.5)
-  ),
-  0: (
-    x:   0,
-    y:   0
-  ),
-  1: (
-    x:   $spacer-x,
-    y:   $spacer-y
-  ),
-  2: (
-    x:   ($spacer-x * 1.5),
-    y:   ($spacer-y * 1.5)
-  ),
-  3: (
-    x:   ($spacer-x * 3),
-    y:   ($spacer-y * 3)
-  )
-);
-
 // Body
 //
 // Settings for the `<body>` element.

@@ -23,14 +23,6 @@ export const Full = {
   }
 }
 
-// function drawComponents () {
-//   console.log('hihihi')
-//   window.Vue.component('app-header', AppHeader)
-//   console.log('222222')
-//   window.Vue.component('left-menu', LeftMenu)
-//   window.Vue.component('app-footer', AppFooter)
-// }
-
 function restoreFromLocalStorage (store) {
   restoreAccessToken(store)
 }

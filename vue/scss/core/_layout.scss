@@ -25,17 +25,18 @@ app-root {
 
 .app-body {
   display: flex;
-  flex-grow:1;
   flex-direction: row;
+  flex-grow: 1;
   overflow-x: hidden;
 
   .main {
     flex: 1;
+    min-width: 0;
   }
 
-  .leftmenu {
-    // $leftmenu-width is the width of the columns
-    flex: 0 0 $leftmenu-width;
+  .sidebar {
+    // $sidebar-width is the width of the columns
+    flex: 0 0 $sidebar-width;
     // put the nav on the left
     order: -1;
   }
@@ -52,7 +53,7 @@ app-root {
 .header-fixed {
   .app-header {
     position: fixed;
-    z-index: $zindex-navbar;
+    z-index: $zindex-sticky;
     width: 100%;
   }
   .app-body {
@@ -61,31 +62,32 @@ app-root {
 }
 
 //
-// LeftMenu
+// Sidebar
 //
-.leftmenu-hidden {
+.sidebar-hidden {
 
-  .leftmenu {
-    margin-left: - $leftmenu-width;
+  .sidebar {
+    margin-left: - $sidebar-width;
   }
 }
 
-.leftmenu-fixed {
+.sidebar-fixed {
 
-  .leftmenu {
+  .sidebar {
     position: fixed;
+    width: $sidebar-width;
     height: 100%;
 
-    .leftmenu-nav {
+    .sidebar-nav {
       height: calc(100vh - #{$navbar-height});
     }
   }
 
   .main, .app-footer {
-    margin-left: $leftmenu-width;
+    margin-left: $sidebar-width;
   }
 
-  &.leftmenu-hidden {
+  &.sidebar-hidden {
 
     .main, .app-footer {
       margin-left: 0;
@@ -93,41 +95,78 @@ app-root {
   }
 }
 
-.leftmenu-off-canvas {
-  .leftmenu {
+.sidebar-off-canvas {
+  .sidebar {
     position: fixed;
-    z-index: $zindex-navbar - 1;
+    z-index: $zindex-sticky - 1;
     height: 100%;
 
 
-    .leftmenu-nav {
+    .sidebar-nav {
       height: calc(100vh - #{$navbar-height});
     }
   }
 }
 
-.leftmenu-compact {
-  .leftmenu {
-    flex: 0 0 $leftmenu-compact-width;
-  }
-
-  &.leftmenu-hidden {
-
-    .leftmenu {
-      margin-left: - $leftmenu-compact-width;
-    }
-  }
-
-  &.leftmenu-fixed {
-
-    .main, .app-footer {
-      margin-left: $leftmenu-compact-width;
+@include media-breakpoint-up(lg) {
+  .sidebar-compact {
+    .sidebar {
+      flex: 0 0 $sidebar-compact-width;
     }
 
-    &.leftmenu-hidden {
+    &.sidebar-hidden {
+
+      .sidebar {
+        margin-left: - $sidebar-compact-width;
+      }
+    }
+
+    &.sidebar-fixed {
 
       .main, .app-footer {
-        margin-left: 0;
+        margin-left: $sidebar-compact-width;
+      }
+
+      .sidebar {
+        width: $sidebar-compact-width;
+      }
+
+      &.sidebar-hidden {
+
+        .main, .app-footer {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
+  .sidebar-minimized {
+    .sidebar {
+      flex: 0 0 $sidebar-minimized-width;
+    }
+
+    &.sidebar-hidden {
+
+      .sidebar {
+        margin-left: - $sidebar-minimized-width;
+      }
+    }
+
+    &.sidebar-fixed {
+
+      .main, .app-footer {
+        margin-left: $sidebar-minimized-width;
+      }
+
+      .sidebar {
+        width: $sidebar-minimized-width;
+      }
+
+      &.sidebar-hidden {
+
+        .main, .app-footer {
+          margin-left: 0;
+        }
       }
     }
   }
@@ -171,7 +210,7 @@ app-root {
   .aside-menu {
     position: fixed;
     right: 0;
-    z-index: $zindex-navbar - 1;
+    z-index: $zindex-sticky - 1;
     height: 100%;
 
     .tab-content {
@@ -188,7 +227,7 @@ app-root {
   .app-footer {
     position: fixed;
     bottom: 0;
-    z-index: $zindex-navbar;
+    z-index: $zindex-sticky;
     width: 100%;
   }
 
@@ -202,11 +241,10 @@ app-root {
 //
 .app-header,
 .app-footer,
-.leftmenu,
+.sidebar,
 .main,
 .aside-menu {
-  transition-duration: $layout-transition-speed, $layout-transition-speed;
-  transition-property: margin-left, margin-right;
+  transition: margin-left $layout-transition-speed, margin-right $layout-transition-speed, width $layout-transition-speed, flex $layout-transition-speed;
 }
 
 //
@@ -217,7 +255,7 @@ app-root {
 
   .app-header {
     position: fixed !important;
-    z-index: $zindex-navbar;
+    z-index: $zindex-sticky;
     width: 100%;
 
     .navbar-toggler {
@@ -253,15 +291,15 @@ app-root {
     margin-top: $navbar-height;
   }
 
-  .leftmenu {
+  .sidebar {
     position: fixed;
-    width: $mobile-leftmenu-width;
+    width: $mobile-sidebar-width;
     height: 100%;
-    margin-left: - $mobile-leftmenu-width;
+    margin-left: - $mobile-sidebar-width;
 
-    .leftmenu-nav,
+    .sidebar-nav,
     .nav {
-      width: $mobile-leftmenu-width !important;
+      width: $mobile-sidebar-width !important;
     }
   }
 
@@ -273,20 +311,20 @@ app-root {
     margin-right: - $aside-menu-width;
   }
 
-  .leftmenu-mobile-show {
+  .sidebar-mobile-show {
 
-    .leftmenu {
-      width: $mobile-leftmenu-width;
+    .sidebar {
+      width: $mobile-sidebar-width;
       margin-left: 0;
 
-      .leftmenu-nav {
+      .sidebar-nav {
         height: calc(100vh - #{$navbar-height});
       }
     }
 
     .main {
-      margin-right: - $mobile-leftmenu-width !important;
-      margin-left: $mobile-leftmenu-width !important;
+      margin-right: - $mobile-sidebar-width !important;
+      margin-left: $mobile-sidebar-width !important;
     }
   }
 }
