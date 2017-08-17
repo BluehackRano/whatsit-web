@@ -77,6 +77,22 @@ export function fetchOrgs (token) {
   })
 }
 
+// github login
+// export function fetchProfile (token) {
+//   return new Promise ((resolve, reject) => {
+//     var github = new GitHub({token: token})
+//     github.getUser().getProfile().then(profile => {
+//       console.log(profile.data)
+//       resolve(profile.data)
+//     }).catch(err => {
+//       auth.clear()
+//       console.error(err)
+//       reject(err)
+//     })
+//   })
+// }
+
+// google login
 export function fetchProfile (token) {
   return new Promise ((resolve, reject) => {
     var github = new GitHub({token: token})

@@ -13,6 +13,16 @@ export function isAuthenticated () {
   return false
 }
 
+export function getProvider () {
+  return localStorage.getItem('provider')
+}
+
+export function setToken (provider) {
+  return localStorage.setItem('provider', provider)
+}
+
 export function clear () {
-  return localStorage.removeItem('access-token')
+  localStorage.removeItem('access-token')
+  localStorage.removeItem('provider')
+  return
 }
