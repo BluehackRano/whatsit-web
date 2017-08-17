@@ -17,7 +17,7 @@ export function getProvider () {
   return localStorage.getItem('provider')
 }
 
-export function setToken (provider) {
+export function setProvider (provider) {
   return localStorage.setItem('provider', provider)
 }
 

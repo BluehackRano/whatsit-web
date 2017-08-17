@@ -3,9 +3,14 @@ let auth = require('../../../util/auth')
 export const Full = {
   beforeCreate: function () {
     console.log('Full: beforeCreate')
-    var aToken = this.$route.query.accessToken
+    let aToken = this.$route.query.accessToken
     if (aToken !== undefined && aToken !== null) {
       auth.setToken(aToken)
+    }
+
+    var aProvider = this.$route.query.provider
+    if (aProvider !== undefined && aProvider !== null) {
+      auth.setProvider(aProvider)
     }
 
     if (!auth.isAuthenticated()) {
