@@ -94,7 +94,7 @@ export function fetchProfile (token) {
     })
   }
   else if (aProvider == 'google') {
-    alert('google!')
+
   }
 }
 
