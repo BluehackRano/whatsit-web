@@ -9,7 +9,8 @@ import {
   fetchOrgRepos,
   updateUserProfile,
   addProject,
-  addInstance
+  addInstance,
+  getRawImages
 } from '../api'
 
 export default {
@@ -138,6 +139,17 @@ export default {
         console.log(data)
         let instanceId = data.data.instanceId
         commit('SET_ACTIVE_INSTANCE', { instanceId })
+      })
+  },
+
+  FETCH_RAW_IMAGES: ({ commit, state }, { userId, projectId }) => {
+    return getRawImages(userId, projectId)
+      .then((data) => {
+        data.data.Images.forEach(rawImg => {
+          if (rawImg) {
+            commit('SET_RAW_IMAGE_LIST', { rawImg })
+          }
+        })
       })
   }
 }

@@ -77,6 +77,7 @@ export function fetchOrgs (token) {
   })
 }
 
+import axios from 'axios'
 export function fetchProfile (token) {
   let aProvider = auth.getProvider()
 
@@ -94,7 +95,22 @@ export function fetchProfile (token) {
     })
   }
   else if (aProvider == 'google') {
-
+    return new Promise ((resolve, reject) => {
+      axios.get('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + token)
+        .then(function (response) {
+          console.log(response.data)
+          let profileData = {
+            login: response.data.email,
+            avatar_url: response.data.picture,
+            email: response.data.email
+          }
+          resolve(profileData)
+        })
+        .catch(function (err) {
+          console.log(err)
+          reject(err)
+        })
+    })
   }
 }
 
@@ -181,6 +197,23 @@ export function updateUserProfile(profile) {
       }
     }).catch(err => {
         console.error(err)
+      reject(err)
+    })
+  })
+}
+
+export function getRawImages(userId, projectId) {
+  return new Promise ((resolve, reject) => {
+    var whatsit = new WhatsIt({})
+    var data = {
+      userId: userId,
+      projectId: projectId,
+    }
+    whatsit.getImages().getImages(data.userId, data.projectId).then(res => {
+      console.log(res)
+      resolve(res.data)
+    }).catch(err => {
+      console.log(err)
       reject(err)
     })
   })

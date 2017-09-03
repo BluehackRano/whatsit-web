@@ -10,13 +10,14 @@ export function createStore () {
   return new Vuex.Store({
     state: {
       accessToken: null,
+      userId: null,
+      displayName: null,
+      rawImgList: [],
+      cropImgList: [],
       activeType: null,
       activeProjectId: null,
       activeInstanceId: null,
       itemsPerPage: 20,
-      userId: null,
-      displayName: null,
-      cropImgList: [],
       items: {/* [id: number]: Item */},
       orgs: {},
       profile: {},

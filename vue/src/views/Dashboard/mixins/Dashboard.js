@@ -18,7 +18,9 @@ export const Dashboard = {
   data: function () {
     return {
       bgCanvas: null,
-      imgSrc: '/static/img/bg3.jpeg',
+      rawImgList: [],
+      rawImgIndex: 0,
+      imgSrc: null,
       cropImg: '',
       cropImgX: '0',
       cropImgY: '0',
@@ -44,6 +46,27 @@ export const Dashboard = {
 
   created: function () {
     bus.$on('save_and_next_image', this.saveAndNextImage)
+
+    this.$store.watch(this.$store.getters.userId,
+      () => {
+        this.resetRawImgListState()
+        fetchRawImages(this.$store)
+      },
+      {
+        deep: true // add this if u need to watch object properties change etc.
+      }
+    )
+
+    this.$store.watch(this.$store.getters.rawImgList,
+      () => {
+        this.rawImgList = this.$store.state.rawImgList
+        this.rawImgIndex = 0
+        this.imgSrc = this.rawImgList[0].uri
+        this.$refs.cropper.replace(this.imgSrc)
+
+        bus.$emit('reset_memo', this.rawImgList[0].labels[0])
+      }
+    )
   },
 
   mounted: function () {
@@ -62,12 +85,17 @@ export const Dashboard = {
     },
 
     saveAndNextImage () {
-      ++imgIndex
-      if (imgIndex == imgList.length) {
-        imgIndex = 0
+      window.alert(this.$store.state.cropImgList)
+
+      ++this.rawImgIndex
+      if (this.rawImgIndex == this.rawImgList.length) {
+        this.resetRawImgListState()
+        fetchRawImages(this.$store)
+        return
       }
-      this.imgSrc = imgList[imgIndex]
+      this.imgSrc = this.rawImgList[this.rawImgIndex].uri
       this.$refs.cropper.replace(this.imgSrc)
+      bus.$emit('reset_memo', this.rawImgList[this.rawImgIndex].labels[0])
 
       this.resetCanvas()
       this.resetCropImgListState()
@@ -111,8 +139,16 @@ export const Dashboard = {
       this.$refs.cropper.clear()
     },
 
+    resetRawImgListState () {
+      while (this.$store.state.rawImgList.length > 0) {
+        this.$store.state.rawImgList.pop()
+      }
+
+      this.resetCanvas()
+      this.resetCropImgListState()
+    },
+
     resetCropImgListState () {
-      window.alert(this.$store.state.cropImgList)
       while (this.$store.state.cropImgList.length > 0) {
         this.$store.state.cropImgList.pop()
       }
@@ -165,6 +201,16 @@ export const Dashboard = {
       }
     }
   }
+}
+
+function fetchRawImages (store) {
+  return store.dispatch('FETCH_RAW_IMAGES', {
+    // test : users/59a9325aadc71eb86c439ef3/projects/59a94006adc71eb86c43c3fd
+    userId: '59a9325aadc71eb86c439ef3',
+    projectId: '59a94006adc71eb86c43c3fd'
+  }).then(() => {
+    console.log('done FETCH_RAW_IMAGES in Dashboard.js')
+  })
 }
 
 function getProjects (store) {

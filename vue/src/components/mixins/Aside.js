@@ -17,7 +17,7 @@ export const Aside = {
 
   data: function () {
     return {
-      memo: '밥, 꽁치찌개, 고사리, 상추, 오이지\n서버 데이터로 채워야 함.',
+      memo: '',
       cropImgList: []
     }
   },
@@ -41,6 +41,7 @@ export const Aside = {
 
   created: function () {
     bus.$on('add_image', this.addImage)
+    bus.$on('reset_memo', this.resetMemo)
   },
 
   methods: {
@@ -55,6 +56,10 @@ export const Aside = {
 
     removeCropImage: function (index) {
       this.$store.state.cropImgList.slice(index, 1)
+    },
+
+    resetMemo: function (memo) {
+      this.memo = memo
     }
   }
 }

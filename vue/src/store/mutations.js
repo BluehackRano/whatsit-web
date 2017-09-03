@@ -78,6 +78,10 @@ export default {
     state.accessToken = token
   },
 
+  SET_RAW_IMAGE_LIST: (state, { rawImg }) => {
+    state.rawImgList.push(rawImg)
+  },
+
   SET_CROP_IMAGE_LIST: (state, { cropImg }) => {
     state.cropImgList.push(
       {

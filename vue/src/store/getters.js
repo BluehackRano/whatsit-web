@@ -26,5 +26,7 @@ export default {
 
   userId: state => () => state.userId,
 
+  rawImgList: state => () => state.rawImgList,
+
   cropImgList: state => () => state.cropImgList
 }
