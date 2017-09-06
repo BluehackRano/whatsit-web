@@ -209,7 +209,7 @@ export function getRawImages(userId, projectId) {
       userId: userId,
       projectId: projectId,
     }
-    whatsit.getImages().getImages(data.userId, data.projectId).then(res => {
+    whatsit.getImageInstance().getImages(data.userId, data.projectId).then(res => {
       console.log(res)
       resolve(res.data)
     }).catch(err => {
