@@ -2,13 +2,14 @@
   <div class="app">
     <AppHeader/>
     <div class="app-body">
-      <Sidebar/>
+      <!--<Sidebar/>-->
       <main class="main">
+        <breadcrumb class="mb-0" :list="list"/>
         <div class="container-fluid">
           <router-view></router-view>
         </div>
       </main>
-      <AppAside/>
+      <!--<AppAside/>-->
     </div>
     <AppFooter/>
   </div>
@@ -16,8 +17,9 @@
 
 <script>
 import AppHeader from '../../components/Header.vue'
-import Sidebar from '../../components/Sidebar.vue'
-import AppAside from '../../components/Aside'
+// import Sidebar from '../../components/Sidebar.vue'
+import Breadcrumb from '../../components/Breadcrumb.vue'
+// import AppAside from '../../components/Aside'
 import AppFooter from '../../components/Footer'
 import {Full} from './mixins/Full'
 
@@ -26,9 +28,10 @@ export default {
   mixins: [Full],
   components: {
     AppHeader,
-    Sidebar,
-    AppAside,
-    AppFooter// ,
+    // Sidebar,
+    Breadcrumb,
+    // AppAside,
+    AppFooter
   },
   computed: {
     name () {

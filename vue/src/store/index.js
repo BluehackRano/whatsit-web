@@ -12,6 +12,8 @@ export function createStore () {
       accessToken: null,
       userId: null,
       displayName: null,
+      projectList: [ /* { id: name: thumbnail: } */ ],
+      datasetList: [ /* { projectId: id:  } */ ],
       rawImgList: [],
       cropImgList: [],
       activeType: null,

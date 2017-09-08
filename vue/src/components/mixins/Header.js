@@ -32,7 +32,7 @@ export const Header = {
         deep: true // add this if u need to watch object properties change etc.
       }
     )
-    document.body.classList.toggle('aside-menu-hidden')
+    // document.body.classList.toggle('aside-menu-hidden')
   },
 
   methods: {

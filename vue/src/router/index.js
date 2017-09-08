@@ -8,7 +8,9 @@ import Full from 'views/Full/Full'
 // Views
 import Login from 'views/Login'
 import Dashboard from 'views/Dashboard/Dashboard'
-import Projects from 'views/Projects'
+import Projects from 'views/Project/Projects'
+import CreateProject from 'views/Project/CreateProject'
+import Datasets from 'views/Dataset/Datasets'
 import InstanceDetail from 'views/DashboardVues//InstanceDetail'
 import AddProject from 'views/ProjectsVues/AddProject'
 import AddProjectCard from 'views/Dashboard/AddProjectCard'
@@ -74,8 +76,43 @@ export function createRouter () {
         path: '/',
         name: 'Full',
         component: Full,
-        redirect: '/dashboard',
+        redirect: '/project/projects',
+        // redirect: '/dashboard',
         children: [
+          {
+            path: 'project',
+            name: 'Project',
+            redirect: '/project/projects',
+            component: {
+              render (c) { return c('router-view') }
+            },
+            children: [
+              {
+                path: 'projects',
+                name: 'Projects',
+                component: Projects
+              },
+              {
+                path: 'createProject',
+                name: 'CreateProject',
+                component: CreateProject
+              },
+              {
+                path: ':projectId',
+                redirect: ':projectId/datasets',
+                component: {
+                  render (c) { return c('router-view') }
+                },
+                children: [
+                  {
+                    path: 'datasets',
+                    name: 'Datasets',
+                    component: Datasets
+                  }
+                ]
+              }
+            ]
+          },
           {
             path: 'dashboard',
             name: 'Dashboard',
