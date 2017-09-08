@@ -49,6 +49,8 @@
       },
       datasetClicked: function (datasetId) {
         console.log('Dataset ID : ' + datasetId)
+        alert('Dataset ID : ' + datasetId)
+        window.open('/dashboard')
       },
       deleteDatasetButtonClicked: function (datasetId, event) {
         event.stopPropagation()
