@@ -45,7 +45,7 @@
     },
     methods: {
       createDatasetButtonClicked: function () {
-
+        this.$router.push('/project/' + this.projectId + '/createDataset')
       },
       datasetClicked: function (datasetId) {
         console.log('Dataset ID : ' + datasetId)

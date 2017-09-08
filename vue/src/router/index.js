@@ -12,7 +12,7 @@ import Projects from 'views/Project/Projects'
 import CreateProject from 'views/Project/CreateProject'
 import Datasets from 'views/Dataset/Datasets'
 import CreateDataset from 'views/Dataset/CreateDataset'
-import CreateVideoDataset from 'views/Dataset/Video/CreateVideoDataset'
+import AddVideoDataset from 'views/Dataset/Video/AddVideoDataset'
 import InstanceDetail from 'views/DashboardVues//InstanceDetail'
 import AddProject from 'views/ProjectsVues/AddProject'
 import AddProjectCard from 'views/Dashboard/AddProjectCard'
@@ -114,12 +114,36 @@ export function createRouter () {
                   {
                     path: 'createDataset',
                     name: 'CreateDataset',
-                    component: CreateDataset,
+                    component: CreateDataset
+                    // children: [
+                    //   {
+                    //     path: 'video',
+                    //     name: 'CreateVideoDataset',
+                    //     redirect: 'video/add',
+                    //     component: {
+                    //       render (c) { return c('router-view') }
+                    //     },
+                    //     children: [
+                    //       {
+                    //         path: 'add',
+                    //         name: 'AddVideoDataset',
+                    //         component: CreateVideoDataset
+                    //       }
+                    //     ]
+                    //   }
+                    // ]
+                  },
+                  {
+                    path: 'dataset/video',
+                    redirect: 'dataset/video/add',
+                    component: {
+                      render (c) { return c('router-view') }
+                    },
                     children: [
                       {
-                        path: 'video',
-                        name: 'CreateVideoDataset',
-                        component: CreateVideoDataset
+                        path: 'add',
+                        name: 'AddVideoDataset',
+                        component: AddVideoDataset
                       }
                     ]
                   }

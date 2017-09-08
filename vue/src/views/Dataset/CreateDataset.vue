@@ -8,14 +8,14 @@
     <div>
       <label>
         <input type="radio" value="video-dataset" v-model="datasetType" checked> Video Link
-      </label>
+      </label><br>
       <label>
         <input type="radio" value="image-dataset" v-model="datasetType" disabled> Image Link
       </label>
     </div>
 
     <div id="bottom-buttons-container">
-      <button type="button" class="btn btn-secondary btn-lg btn-block active" @click="nextButtonClicked">Create</button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block active" @click="nextButtonClicked">Next</button>
       <button type="button" class="btn btn-secondary btn-lg btn-block active" @click="cancelDataset">Cancel</button>
     </div>
 
@@ -37,7 +37,9 @@
     },
     methods: {
       nextButtonClicked: function () {
-        console.log(this.datasetType.value)
+        // todo
+        // if video dataset
+        this.$router.replace({ path: '/project/' + this.projectId + '/dataset/video' })
       },
       cancelDataset: function () {
         this.$router.replace({ path: '/project/' + this.projectId + '/datasets' })
