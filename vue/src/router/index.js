@@ -11,6 +11,8 @@ import Dashboard from 'views/Dashboard/Dashboard'
 import Projects from 'views/Project/Projects'
 import CreateProject from 'views/Project/CreateProject'
 import Datasets from 'views/Dataset/Datasets'
+import CreateDataset from 'views/Dataset/CreateDataset'
+import CreateVideoDataset from 'views/Dataset/Video/CreateVideoDataset'
 import InstanceDetail from 'views/DashboardVues//InstanceDetail'
 import AddProject from 'views/ProjectsVues/AddProject'
 import AddProjectCard from 'views/Dashboard/AddProjectCard'
@@ -108,6 +110,18 @@ export function createRouter () {
                     path: 'datasets',
                     name: 'Datasets',
                     component: Datasets
+                  },
+                  {
+                    path: 'createDataset',
+                    name: 'CreateDataset',
+                    component: CreateDataset,
+                    children: [
+                      {
+                        path: 'video',
+                        name: 'CreateVideoDataset',
+                        component: CreateVideoDataset
+                      }
+                    ]
                   }
                 ]
               }
