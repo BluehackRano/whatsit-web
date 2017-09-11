@@ -1,32 +1,96 @@
 <template>
-  <div class="add-video-dataset-container">
-    <h1>Add Video Link</h1>
 
-    <h2>Name</h2>
-    <input type="text" v-model="videoName" placeholder="Please enter the video name."/>
+  <div id="all">
 
-    <h2>Insert Video Link URL</h2>
-    <input type="text" v-model="videoLinkURL" placeholder="Please enter the video link URL."/>
+    <!-- Video Link -->
+    <div class="add-video-dataset-container" v-if="viewType === 'Link'">
+      <h1>Add Video Link</h1>
 
-    <div class="bottom-buttons-container">
+      <h2>Name</h2>
+      <input type="text" v-model="videoName" placeholder="Please enter the video name."/>
 
-      <div class="row">
-        <div class="col-sm-6 col-md-6">
-          <button type="button" class="btn btn-secondary btn-lg btn-block active" @click="">Back</button>
+      <h2>Insert Video Link URL</h2>
+      <input type="text" v-model="videoLinkURL" placeholder="Please enter the video link URL."/>
+
+      <div class="bottom-buttons-container">
+        <div class="row">
+          <div class="col-sm-6 col-md-6">
+            <button type="button" class="btn btn-secondary btn-lg btn-block active" @click="backToCreateDatasetButtonClicked">Back</button>
+          </div>
+          <div class="col-sm-6 col-md-6">
+            <button type="button" class="btn btn-secondary btn-lg btn-block active" @click="nextButtonClicked">Next</button>
+          </div>
         </div>
-        <div class="col-sm-6 col-md-6">
-          <button type="button" class="btn btn-secondary btn-lg btn-block active" @click="">Next</button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-12 col-md-12">
-          <button type="button" class="btn btn-secondary btn-lg btn-block active" @click="cancelAddVideoDataset">Cancel</button>
+        <div class="row">
+          <div class="col-sm-12 col-md-12">
+            <button type="button" class="btn btn-secondary btn-lg btn-block active" @click="cancelAddVideoDataset">Cancel</button>
+          </div>
         </div>
       </div>
 
     </div>
 
+    <!-- Trim Info -->
+    <div class="add-video-dataset-trim-info-container" v-else-if="viewType === 'TrimInfo'">
+      <h1>Video Trim Info</h1>
+
+      <div class="row">
+        <div class="col-sm-12 col-md-12">
+          <button class="" type="button" class="btn btn-secondary btn-lg btn-block" @click="addTrimInfoButtonClicked">+</button>
+        </div>
+      </div>
+
+      <div class="row start-end-time-text">
+        <div class="col-sm-6 col-md-6">
+          <h4>Start Time</h4>
+        </div>
+        <div class="col-sm-6 col-md-6">
+          <h4>End Time</h4>
+        </div>
+      </div>
+
+      <div class="trim-info-list">
+        <div class="animated fadeIn">
+          <div class="col-sm-12 col-md-12 trim-info-item" v-for="(trimInfo, index) in trimInfoList">
+
+            <div class="delete-trim-info-button" @click="deleteTrimInfoButtonClicked(index)">
+              <h3>X</h3>
+            </div>
+
+            <div class="start-time">
+              <input type="number" min="0" v-model="trimInfo.startHour"/> : <input type="number" min="0" max="59" v-model="trimInfo.startMin"/> : <input type="number" min="0" max="59" v-model="trimInfo.startSec"/>
+            </div>
+            ~
+            <div class="end-time">
+              <input type="number" min="0" v-model="trimInfo.endHour"/> : <input type="number" min="0" max="59" v-model="trimInfo.endMin"/> : <input type="number" min="0" max="59" v-model="trimInfo.endSec"/>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-buttons-container">
+        <div class="row">
+          <div class="col-sm-12 col-md-12">
+            <button type="button" class="btn btn-secondary btn-lg btn-block active trim-info-bottom-complete-button" @click="completeButtonClicked">Complete</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12 col-md-12">
+            <button type="button" class="btn btn-secondary btn-lg btn-block active trim-info-bottom-buttons" @click="backToVideoLinkButtonClicked">Back</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12 col-md-12">
+            <button type="button" class="btn btn-secondary btn-lg btn-block active trim-info-bottom-buttons" @click="cancelAddVideoDataset">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
+
+
 </template>
 
 <script>
@@ -35,17 +99,59 @@
     data: function () {
       return {
         projectId: '',
+        viewType: 'Link', // 'TrimInfo'
         videoName: '',
-        videoLinkURL: ''
+        videoLinkURL: '',
+        trimInfoList: [
+          /*
+          { startHour: 0, startMin: 0, startSec: 0, endHour: 0, endMin: 0, endSec: 0 },
+          { startHour: 0, startMin: 0, startSec: 0, endHour: 0, endMin: 0, endSec: 0 },
+          { startHour: 0, startMin: 0, startSec: 0, endHour: 0, endMin: 0, endSec: 0 }
+          */
+        ]
       }
     },
     created: function () {
       this.projectId = this.$route.params.projectId
-      console.log('projectId : ' + this.projectId)
+      this.viewType = 'Link'
     },
     methods: {
+      backToCreateDatasetButtonClicked: function () {
+        this.$router.replace({ path: '/project/' + this.projectId + '/createDataset' })
+      },
+      nextButtonClicked: function () {
+        if (this.videoName.trim() === '') {
+          return
+        }
+        if (this.videoLinkURL.trim() === '') {
+          return
+        }
+
+        this.viewType = 'TrimInfo'
+      },
+      addTrimInfoButtonClicked: function () {
+        this.trimInfoList.push({ startHour: 0, startMin: 0, startSec: 0, endHour: 0, endMin: 0, endSec: 0 })
+      },
+      deleteTrimInfoButtonClicked: function (index) {
+        this.trimInfoList.splice(index, 1)
+      },
+      completeButtonClicked: function () {
+        if (this.videoName.trim() === '') {
+          return
+        }
+        if (this.videoLinkURL.trim() === '') {
+          return
+        }
+
+        for (let i = 0; i < this.trimInfoList.length; i++) {
+          console.log(this.trimInfoList[i])
+        }
+      },
+      backToVideoLinkButtonClicked: function () {
+        this.viewType = 'Link'
+      },
       cancelAddVideoDataset: function () {
-        this.$router.replace('/project/projects')
+        this.$router.replace({ path: '/project/' + this.projectId + '/createDataset' })
       }
     }
   }
@@ -94,16 +200,111 @@
   .add-video-dataset-container > input[type=text]::-moz-placeholder { font-size: 15pt; font-style:italic; }
 
 
+  .add-video-dataset-trim-info-container {
+    position: absolute;
+    left: 50%;
+    width: 700px;
+    height: 1200px;
+    margin-left: -350px;
+    /*background-color: white;*/
+    /*box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2)*/
+  }
+
+  .add-video-dataset-trim-info-container > h1 {
+    height: 60px;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    font-size: 30pt;
+    text-align: center;
+  }
+
+  .start-end-time-text {
+    margin-top: 30px;
+  }
+
+  .start-end-time-text {
+    text-align: center;
+  }
+
+  .trim-info-list {
+    width: 100%;
+    height: 600px;
+    overflow-y: auto;
+    margin-top: 10px;
+    margin-bottom: 50px;
+  }
+
+  .trim-info-item {
+    height: 120px;
+    margin-bottom: 20px;
+    line-height: 120px;
+    background-color: lightgray;
+    border-radius: 15px;
+    border: 2px solid gray;
+    text-align: center;
+  }
+
+  .trim-info-item > .delete-trim-info-button {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    margin-top: 10px;
+    float: right;
+    cursor: pointer;
+  }
+
+  .trim-info-item > .start-time {
+    height: 40px;
+    line-height: 40px;
+    margin-left: 30px;
+    float: left;
+  }
+
+  .trim-info-item > .start-time > input[type=number] {
+    width: 50px;
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  .trim-info-item > .end-time {
+    height: 40px;
+    line-height: 40px;
+    margin-right: 30px;
+    float: right;
+  }
+
+  .trim-info-item > .end-time > input[type=number] {
+    width: 50px;
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  /*.trim-info-item > div {*/
+    /*text-align: center;*/
+  /*}*/
+
   .bottom-buttons-container {
     position: absolute;
     width: 100%;
     height: 250px;
     bottom: 0;
+    margin-bottom: 50px;
   }
 
   .bottom-buttons-container > div > div > button {
     height: 120px;
     margin-top: 30px;
+  }
+
+  .bottom-buttons-container > div > div > .trim-info-bottom-complete-button {
+    height: 80px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .bottom-buttons-container > div > div > .trim-info-bottom-buttons {
+    height: 80px;
+    margin-top: 10px;
   }
 
 </style>

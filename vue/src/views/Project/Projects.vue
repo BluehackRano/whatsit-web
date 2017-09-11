@@ -15,15 +15,20 @@
           </div>
         </div>
 
-        <div class="col-sm-6 col-md-4" v-for="(project, index) in projectList" :key="project.id" @click="projectClicked(project.id)">
+        <div class="col-sm-6 col-md-4" v-for="(project, index) in projectList" :key="project.id"
+             @click="projectClicked(project.id)">
           <div class="card project-card-item">
             <img src="/static/img/bg3.jpeg">
+            <!--<div class="dropdown more-button">-->
+              <!--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><span class="fa fa-ellipsis-v"></span></button>-->
+              <!--<ul class="dropdown-menu">-->
+                <!--<li><a href="#">HTML</a></li>-->
+                <!--<li><a href="#">CSS</a></li>-->
+                <!--<li><a href="#">JavaScript</a></li>-->
+              <!--</ul>-->
+            <!--</div>-->
             <div class="card-footer">
               {{ project.name }}
-              <!--<div slot="dropdown-menu" class="dropdown-menu dropdown-menu-right">-->
-                <!--<div class="dropdown-header text-center"><strong>Settings</strong></div>-->
-                <!--<a @click="logout" class="dropdown-item" href="#"><i class="fa fa-lock"></i> Logout</a>-->
-              <!--</div>-->
             </div>
           </div>
         </div><!--/.col-->
@@ -87,5 +92,14 @@
 
   div > .card-footer {
     height: 50px;
+  }
+
+  div > .card-footer > #more-button {
+    float: right;
+    height: 50px;
+    width: 50px;
+    margin-top: 0px;
+    margin-right: 10px;
+    background-color: cornflowerblue;
   }
 </style>

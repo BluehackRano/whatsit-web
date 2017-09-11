@@ -13,6 +13,7 @@ import CreateProject from 'views/Project/CreateProject'
 import Datasets from 'views/Dataset/Datasets'
 import CreateDataset from 'views/Dataset/CreateDataset'
 import AddVideoDataset from 'views/Dataset/Video/AddVideoDataset'
+import VideoCanvas from 'views/Canvas/Video/VideoCanvas'
 import InstanceDetail from 'views/DashboardVues//InstanceDetail'
 import AddProject from 'views/ProjectsVues/AddProject'
 import AddProjectCard from 'views/Dashboard/AddProjectCard'
@@ -155,6 +156,11 @@ export function createRouter () {
             path: 'dashboard',
             name: 'Dashboard',
             component: Dashboard
+          },
+          {
+            path: 'app/video',
+            name: 'VideoCanvas',
+            component: VideoCanvas
           }
         ]
       }

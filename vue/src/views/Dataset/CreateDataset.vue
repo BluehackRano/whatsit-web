@@ -83,6 +83,7 @@
 
   #bottom-buttons-container > button {
     height: 120px;
+    margin-top: 30px;
   }
 
 </style>
