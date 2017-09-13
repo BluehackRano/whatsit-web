@@ -1,9 +1,6 @@
 "use strict";
 
-import {JSZIP} from './jszip'
-//let jsZip = require('./jszip')
-
-export class FramesManager {
+class FramesManager {
   constructor() {
     this.frames = {
       totalFrames: () => { return 0; }
@@ -129,8 +126,7 @@ function extractFramesFromVideo(config, file, progress) {
 /**
  * Extracts the frame sequence from a previously generated zip file.
  */
-export function extractFramesFromZip(config, file) {
-  console.log('extractFramesFromZip')
+function extractFramesFromZip(config, file) {
   return new Promise((resolve, _) => {
     JSZip
       .loadAsync(file)
@@ -361,7 +357,7 @@ class AnnotatedObject {
 /**
  * Tracks annotated objects throughout a frame sequence using optical flow.
  */
-export class AnnotatedObjectsTracker {
+class AnnotatedObjectsTracker {
   constructor(framesManager) {
     this.framesManager = framesManager;
     this.annotatedObjects = [];
