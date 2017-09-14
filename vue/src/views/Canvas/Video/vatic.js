@@ -1,6 +1,7 @@
 "use strict";
 
-var jsfeat = require('./jsfeat')
+let jsfeat = require('./jsfeat')
+
 
 export class FramesManager {
   constructor() {

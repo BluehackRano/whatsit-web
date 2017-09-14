@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import 'es6-promise/auto'
+import 'expose-loader?$!expose-loader?jQuery!jquery'
 import { createApp } from './app'
 // global progress bar
 

@@ -1,5 +1,5 @@
 <template>
-  <div id="all">
+  <div>
     <!--<p>To resume a previous annotation, select a frames zip archive: <input type="file" id="zipFile" ref="zipFile" accept=".zip" @change="extractFramesFromZip" /></p>-->
 
     <button @click="extractFramesFromZipClicked">클릭클릭</button>
@@ -33,6 +33,7 @@
   let vatic = require('./vatic')
   import { FramesManager, AnnotatedObjectsTracker, AnnotatedObject, AnnotatedFrame, BoundingBox } from './vatic'
   import { JSZIP } from './jszip'
+  let nudged = require('./nudged')
 
   export default {
     name: 'VideoCanvas',
@@ -524,16 +525,36 @@
       },
 
       doodleMouseMove: function (e) {
-        let ev = e || window.event;
-        if (ev.pageX) {
-          this.mouse.x = ev.pageX;
-          this.mouse.y = ev.pageY;
-        } else if (ev.clientX) {
-          this.mouse.x = ev.clientX;
-          this.mouse.y = ev.clientY;
-        }
-        this.mouse.x -= this.doodle.offsetLeft;
-        this.mouse.y -= this.doodle.offsetTop;
+//        let ev = e || window.event;
+//        if (ev.pageX) {
+//          this.mouse.x = ev.pageX;
+//          this.mouse.y = ev.pageY;
+//
+//          console.log('pageX')
+//          console.log(ev.pageX + ' ,, ' + ev.pageY)
+//
+//        } else if (ev.clientX) {
+//          this.mouse.x = ev.clientX;
+//          this.mouse.y = ev.clientY;
+//
+//          console.log('clientX')
+//          console.log(ev.clientX + ' ,, ' + ev.clientY)
+//        }
+//
+//        console.log('offset')
+//        console.log(this.doodle.offsetLeft + ' ,, ' + this.doodle.offsetTop)
+//
+//        this.mouse.x -= this.doodle.offsetLeft;
+//        this.mouse.y -= this.doodle.offsetTop;
+//
+//        console.log('mouseXY')
+//        console.log(this.mouse.x + ' ,, ' + this.mouse.y)
+//
+//        console.log('XYXY')
+//        console.log(e.offsetX + ' ... ' + e.offsetY)
+
+        this.mouse.x = e.offsetX
+        this.mouse.y = e.offsetY
 
         if (this.tmpAnnotatedObject !== null) {
           this.tmpAnnotatedObject.width = Math.abs(this.mouse.x - this.mouse.startX);
@@ -559,26 +580,29 @@
           let bbox = new BoundingBox(this.tmpAnnotatedObject.x, this.tmpAnnotatedObject.y, this.tmpAnnotatedObject.width, this.tmpAnnotatedObject.height);
           annotatedObject.add(new AnnotatedFrame(this.player.currentFrame, bbox, true));
           this.annotatedObjectsTracker.annotatedObjects.push(annotatedObject);
+          console.log(annotatedObject)
           this.tmpAnnotatedObject = null;
 
-          this.interactify(
-            annotatedObject.dom,
-            (x, y, width, height) => {
-              let bbox = new BoundingBox(x, y, width, height);
-              annotatedObject.add(new AnnotatedFrame(this.player.currentFrame, bbox, true));
-            }
-          );
+//          this.interactify(
+//            annotatedObject.dom,
+//            (x, y, width, height) => {
+//              let bbox = new BoundingBox(x, y, width, height);
+//              annotatedObject.add(new AnnotatedFrame(this.player.currentFrame, bbox, true));
+//            }
+//          );
 
           this.addAnnotatedObjectControls(annotatedObject);
 
           this.doodle.style.cursor = 'default';
         } else {
-          this.mouse.startX = this.mouse.x;
-          this.mouse.startY = this.mouse.y;
+          this.mouse.startX = e.offsetX
+          this.mouse.startY = e.offsetY
+
+          console.log(this.mouse.startX + ' , ' + this.mouse.startY)
 
           let dom = this.newBboxElement();
-          dom.style.left = this.mouse.x + 'px';
-          dom.style.top = this.mouse.y + 'px';
+          dom.style.left = this.mouse.startX + 'px';
+          dom.style.top = this.mouse.startY + 'px';
           this.tmpAnnotatedObject = { dom: dom };
         }
       }
@@ -590,12 +614,12 @@
   }
 </script>
 
-<style scoped>
-  #all {
-    width: 100%;
-    height: 500px;
-    background-color: #00bf8f;
-  }
+<style>
+  /*#all {*/
+    /*width: 100%;*/
+    /*height: 500px;*/
+    /*background-color: #00bf8f;*/
+  /*}*/
 
   .output { font-family: monospace; font-weight: bold; }
 
