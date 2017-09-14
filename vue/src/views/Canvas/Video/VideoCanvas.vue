@@ -2,9 +2,10 @@
   <div>
     <!--<p>To resume a previous annotation, select a frames zip archive: <input type="file" id="zipFile" ref="zipFile" accept=".zip" @change="extractFramesFromZip" /></p>-->
 
-    <button @click="extractFramesFromZipClicked">클릭클릭</button>
-
     <ol>
+      <li>
+        <button @click="extractFramesFromZipClicked">클릭클릭</button>
+      </li>
       <li>
         <p class="output" id="videoDimensions" ref="videoDimensions"></p>
         <p class="output" id="extractionProgress" ref="extractionProgress"></p>
@@ -18,6 +19,24 @@
         </div>
         <h3>{{ currentFrame }} / {{ totalFrames }}</h3>
         <p><input type="button" id="play" ref="playButton" value="Play" disabled="true" @click="playButtonClicked" /><input type="button" id="pause" ref="pauseButton" value="Pause" disabled="true" @click="pauseButtonClicked" /></p>
+          <table border="1">
+            <tr>
+              <td>New Box</td>
+              <td>Ctrl</td>
+            </tr>
+            <tr>
+              <td>Play / Pause</td>
+              <td>SpaceBar</td>
+            </tr>
+            <tr>
+              <td>Previous Frame</td>
+              <td><-</td>
+            </tr>
+            <tr>
+              <td>Next Frame</td>
+              <td>-></td>
+            </tr>
+          </table>
         <div id="slider" ref="slider"></div>
         <!--<p><label for="speed">Speed multiplier: </label><input type="text" id="speed" value="1.00" size="4" /></p>-->
         <div id="objects"></div>
@@ -34,6 +53,7 @@
   import { FramesManager, AnnotatedObjectsTracker, AnnotatedObject, AnnotatedFrame, BoundingBox } from './vatic'
   import { JSZIP } from './jszip'
   let nudged = require('./nudged')
+  import interactJs from 'interactjs'
 
   export default {
     name: 'VideoCanvas',
@@ -267,7 +287,7 @@
 
         if (e.keyCode === 32) { // space
           self.player.toogle();
-        } else if (e.keyCode === 78) { // n
+        } else if (e.keyCode === 17) { // ctrl
           self.doodle.style.cursor = 'crosshair';
         } else if (e.keyCode === 27) { // escape
           if (self.tmpAnnotatedObject != null) {
@@ -288,6 +308,7 @@
           e.preventDefault();
         }
       }
+
 
     },
     methods: {
@@ -310,14 +331,14 @@
             promise.then((frames) => {
               // console.log(frames)
               if (frames.totalFrames() > 0) {
-                self.extractionProgressElement.innerHTML = 'Extraction completed. ' + frames.totalFrames() + ' frames captured.'
+                self.extractionProgressElement.innerHTML = 'Total : ' + frames.totalFrames() + ' frames'
                 self.currentFrame = 0
                 self.totalFrames = frames.totalFrames()
                 frames.getFrame(0).then((blob) => {
                   vatic.blobToImage(blob).then((img) => {
                     self.initializeCanvasDimensions(img);
                     self.ctx.drawImage(img, 0, 0);
-                    self.videoDimensionsElement.innerHTML = 'Video dimensions determined: ' + img.width + 'x' + img.height;
+                    self.videoDimensionsElement.innerHTML = 'Video Dimensions : ' + img.width + ' X ' + img.height;
 
                     self.framesManager.set(frames)
 //                    self.slider.init(
@@ -591,6 +612,85 @@
 //            }
 //          );
 
+          let self = this
+
+          interactJs.interact('.bbox')
+            .draggable({
+              // enable inertial throwing
+              inertia: true,
+              // keep the element within the area of it's parent
+              restrict: {
+                restriction: "parent",
+                endOnly: true,
+                elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+              },
+              onmove: window.dragMoveListener
+            })
+            .resizable({
+              preserveAspectRatio: false,
+              edges: { left: true, right: true, bottom: true, top: true },
+              margin: 10
+            })
+            .on('resizemove', function (event) {
+              // console.log(event.rect)
+
+              var target = event.target,
+                x = (parseFloat(target.getAttribute('data-x')) || 0),
+                y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+              // update the element's style
+              target.style.width  = event.rect.width + 'px';
+              target.style.height = event.rect.height + 'px';
+
+              // translate when resizing from top or left edges
+              x += event.deltaRect.left;
+              y += event.deltaRect.top;
+
+              target.style.webkitTransform = target.style.transform =
+                'translate(' + x + 'px,' + y + 'px)';
+
+              target.setAttribute('data-x', x);
+              target.setAttribute('data-y', y);
+              target.textContent = Math.round(event.rect.width) + '×' + Math.round(event.rect.height);
+            })
+            .on('resizeend', function (event) {
+              var target = event.target,
+                x = (parseFloat(target.getAttribute('data-x')) || 0),
+                y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+              annotatedObject.frames[self.currentFrame].bbox.x = parseInt(target.style.left.replace('px', '')) + x
+              annotatedObject.frames[self.currentFrame].bbox.y = parseInt(target.style.top.replace('px', '')) + y
+              annotatedObject.frames[self.currentFrame].bbox.width = parseInt(target.style.width.replace('px', ''))
+              annotatedObject.frames[self.currentFrame].bbox.height = parseInt(target.style.height.replace('px', ''))
+
+              console.log(annotatedObject)
+            })
+            .on('dragmove', function (event) {
+              var target = event.target,
+                // keep the dragged position in the data-x/data-y attributes
+                x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+                y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+              // translate the element
+              target.style.webkitTransform =
+                target.style.transform =
+                  'translate(' + x + 'px, ' + y + 'px)';
+
+              // update the posiion attributes
+              target.setAttribute('data-x', x);
+              target.setAttribute('data-y', y);
+            })
+            .on('dragend', function (event) {
+              var target = event.target,
+                x = (parseFloat(target.getAttribute('data-x')) || 0),
+                y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+              annotatedObject.frames[self.currentFrame].bbox.x = parseInt(target.style.left.replace('px', '')) + x
+              annotatedObject.frames[self.currentFrame].bbox.y = parseInt(target.style.top.replace('px', '')) + y
+
+              console.log(annotatedObject)
+            })
+
           this.addAnnotatedObjectControls(annotatedObject);
 
           this.doodle.style.cursor = 'default';
@@ -635,9 +735,10 @@
   }
 
   .bbox {
-    border: 1px solid #FF0000;
+    border: 3px solid #FF0000;
     position: absolute;
     z-index: 3;
+    box-sizing: border-box;
   }
 
   .handle, .ui-resizable-handle {
@@ -726,4 +827,5 @@
   .ui-corner-all {
     border-radius: 4px;
   }
+
 </style>

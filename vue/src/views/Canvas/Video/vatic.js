@@ -460,6 +460,9 @@ export class AnnotatedObjectsTracker {
               result.push({annotatedObject: annotatedObject, annotatedFrame: annotatedFrame});
             }
 
+            console.log('result')
+            console.log(result)
+
             resolve({img: img, objects: result});
           });
         });
