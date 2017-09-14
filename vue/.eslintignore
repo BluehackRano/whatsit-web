@@ -7,3 +7,5 @@ src/components/*
 src/views/Dashboard/*
 src/views/Full/*
 src/views/Project/*
+
+src/views/Canvas/*

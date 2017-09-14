@@ -1,7 +1,6 @@
 "use strict";
 
-import {JSZIP} from './jszip'
-//let jsZip = require('./jszip')
+var jsfeat = require('./jsfeat')
 
 export class FramesManager {
   constructor() {
@@ -19,7 +18,7 @@ export class FramesManager {
   }
 }
 
-function blobToImage(blob) {
+export function blobToImage(blob) {
   return new Promise((result, _) => {
     let img = new Image();
     img.onload = function() {
@@ -273,7 +272,7 @@ class OpticalFlow {
 /**
  * Represents the coordinates of a bounding box
  */
-class BoundingBox {
+export class BoundingBox {
   constructor(x, y, width, height) {
     this.x = x;
     this.y = y;
@@ -285,7 +284,7 @@ class BoundingBox {
 /**
  * Represents a bounding box at a particular frame.
  */
-class AnnotatedFrame {
+export class AnnotatedFrame {
   constructor(frameNumber, bbox, isGroundTruth) {
     this.frameNumber = frameNumber;
     this.bbox = bbox;
@@ -300,7 +299,7 @@ class AnnotatedFrame {
 /**
  * Represents an object bounding boxes throughout the entire frame sequence.
  */
-class AnnotatedObject {
+export class AnnotatedObject {
   constructor() {
     this.frames = [];
   }
@@ -493,3 +492,4 @@ export class AnnotatedObjectsTracker {
     return this.ctx.getImageData(0, 0, canvas.width, canvas.height);
   }
 };
+
