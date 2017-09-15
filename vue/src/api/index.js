@@ -1,7 +1,8 @@
 // this is aliased in webpack config based on server/client build
 import { createAPI } from 'create-api'
 import GitHub from 'github-api'
-import WhatsIt from 'whatsit-sdk-js'
+// import WhatsIt from 'whatsit-sdk-js'
+import WhatsIt from '../../../../../.'
 
 let auth = require('../util/auth')
 

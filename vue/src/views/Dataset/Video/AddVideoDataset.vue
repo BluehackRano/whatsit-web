@@ -57,6 +57,10 @@
               <h3>X</h3>
             </div>
 
+            <div class="col-sm-12 col-md-12 section-input">
+              <input class="col-sm-12 col-md-12" type="text" v-model="trimInfo.sectionInput" @keyup="sectionValueChanged(index)" />
+            </div>
+
             <div class="start-time">
               <input type="number" min="0" v-model="trimInfo.startHour"/> : <input type="number" min="0" max="59" v-model="trimInfo.startMin"/> : <input type="number" min="0" max="59" v-model="trimInfo.startSec"/>
             </div>
@@ -102,6 +106,7 @@
         viewType: 'Link', // 'TrimInfo'
         videoName: '',
         videoLinkURL: '',
+        sectionInput: '',
         trimInfoList: [
           /*
           { startHour: 0, startMin: 0, startSec: 0, endHour: 0, endMin: 0, endSec: 0 },
@@ -131,6 +136,22 @@
       },
       addTrimInfoButtonClicked: function () {
         this.trimInfoList.push({ startHour: 0, startMin: 0, startSec: 0, endHour: 0, endMin: 0, endSec: 0 })
+      },
+      sectionValueChanged: function (index) {
+        let currentTrimInfo = this.trimInfoList[index]
+
+        let splitSection = currentTrimInfo.sectionInput.split('	')
+
+        let splitStartTime = splitSection[0].split(':')
+        let splitEndTime = splitSection[1].split(':')
+
+        currentTrimInfo.startHour = parseInt(splitStartTime[0])
+        currentTrimInfo.startMin = parseInt(splitStartTime[1])
+        currentTrimInfo.startSec = parseInt(splitStartTime[2])
+
+        currentTrimInfo.endHour = parseInt(splitEndTime[0])
+        currentTrimInfo.endMin = parseInt(splitEndTime[1])
+        currentTrimInfo.endSec = parseInt(splitEndTime[2])
       },
       deleteTrimInfoButtonClicked: function (index) {
         this.trimInfoList.splice(index, 1)
@@ -242,6 +263,23 @@
     border-radius: 15px;
     border: 2px solid gray;
     text-align: center;
+  }
+
+  .trim-info-item > .section-input {
+    width: 80%;
+    height: 30px;
+    position: absolute;
+    margin-top: 0;
+  }
+
+  .trim-info-item > .section-input > input[type=text] {
+    width: 400px;
+    height: 30px;
+    line-height: 30px;
+    position: absolute;
+    left: 0;
+    margin-top: 0;
+    margin-left: 0;
   }
 
   .trim-info-item > .delete-trim-info-button {
