@@ -8,9 +8,15 @@ import {
   fetchInstancesByUser,
   fetchOrgRepos,
   updateUserProfile,
-  addProject,
   addInstance,
-  getRawImages
+  getRawImages,
+  fetchProjects,
+  addProject,
+  getProjectTrainset,
+  fetchDatasets,
+  fetchDataset,
+  addDataset,
+  updateDataset
 } from '../api'
 
 export default {
@@ -70,9 +76,63 @@ export default {
         updateUserProfile(state.profile)
           .then((data) => {
             console.log('UPDATE_USER_PROFILE: ' + JSON.stringify(data))
-            let userId = data.data.userId
+            let userId = data.data._id
             commit('SET_USER_ID', { userId })
           })
+      })
+  },
+
+  FETCH_PROJECTS: ({ commit, dispatch, state }, { userId }) => {
+    return fetchProjects(userId)
+      .then(projects => {
+        console.log('FETCH_PROJECTS then in actions.js')
+        commit('SET_PROJECTS', { projects })
+      })
+  },
+
+  ADD_PROJECT: ({ commit, dispatch, state }, { options }) => {
+    return addProject(options)
+      .then(projects => {
+        console.log('FETCH_PROJECTS then in actions.js')
+        // commit('ADD_PROJECT', { options })
+      })
+  },
+
+  GET_PROJECT_TRAINSET: ({ commit, dispatch, state }, { projectId, options }) => {
+    return getProjectTrainset(projectId, options)
+      .then(data => {
+        console.log('GET_PROJECT_TRAINSET then in actions.js')
+        // commit('SET_PROJECTS', { projects })
+      })
+  },
+
+  FETCH_DATASETS: ({ commit, dispatch, state }, { projectId }) => {
+    return fetchDatasets(projectId)
+      .then(datasets => {
+        console.log('FETCH_DATASETS then in actions.js')
+        commit('SET_DATASETS', { datasets })
+      })
+  },
+
+  ADD_DATASET: ({ commit, dispatch, state }, { options }) => {
+    return addDataset(options)
+      .then(res => {
+        console.log('ADD_DATASET then in actions.js')
+      })
+  },
+
+  FETCH_DATASET: ({ commit, dispatch, state }, { datasetId }) => {
+    return fetchDataset(datasetId)
+      .then(currentDataset => {
+        console.log('FETCH_DATASET then in actions.js')
+        commit('SET_DATASET', { currentDataset })
+      })
+  },
+
+  UPDATE_DATASET: ({ commit, dispatch, state }, { options, datasetId }) => {
+    return updateDataset(options, datasetId)
+      .then(res => {
+        console.log('UPDATE_DATASET then in actions.js')
       })
   },
 
@@ -124,14 +184,14 @@ export default {
     commit('SET_CROP_IMAGE_LIST', { cropImg })
   },
 
-  ADD_PROJECT: ({ commit, state }, { repo }) => {
-    return addProject(repo, state.userId)
-      .then((data) => {
-        console.log(data)
-        let projectId = data.data.projectId
-        commit('SET_ACTIVE_PROJECT', { projectId })
-      })
-  },
+  // ADD_PROJECT: ({ commit, state }, { repo }) => {
+  //   return addProject(repo, state.userId)
+  //     .then((data) => {
+  //       console.log(data)
+  //       let projectId = data.data.projectId
+  //       commit('SET_ACTIVE_PROJECT', { projectId })
+  //     })
+  // },
 
   ADD_INSTANCE: ({ commit, state }, { projectId }) => {
     return addInstance(projectId)

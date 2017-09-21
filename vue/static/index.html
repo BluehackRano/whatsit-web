@@ -496,7 +496,9 @@
       }
 
       function interactify(dom, onChange) {
+        console.log(dom)
         let bbox = $(dom);
+        console.log(bbox)
         bbox.addClass('bbox');
 
         let createHandleDiv = (className) => {

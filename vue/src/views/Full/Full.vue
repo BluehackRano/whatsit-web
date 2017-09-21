@@ -9,7 +9,9 @@
           <router-view></router-view>
         </div>
       </main>
-      <!--<AppAside/>-->
+      <div v-if="isImageCanvas">
+        <AppAside/>
+      </div>
     </div>
     <AppFooter/>
   </div>
@@ -19,18 +21,25 @@
 import AppHeader from '../../components/Header.vue'
 // import Sidebar from '../../components/Sidebar.vue'
 import Breadcrumb from '../../components/Breadcrumb.vue'
-// import AppAside from '../../components/Aside'
+import AppAside from '../../components/Aside'
 import AppFooter from '../../components/Footer'
 import {Full} from './mixins/Full'
+
+import bus from '../../util/bus'
 
 export default {
   name: 'Full',
   mixins: [Full],
+  data () {
+    return {
+      isImageCanvas: false
+    }
+  },
   components: {
     AppHeader,
     // Sidebar,
     Breadcrumb,
-    // AppAside,
+    AppAside,
     AppFooter
   },
   computed: {
@@ -40,6 +49,14 @@ export default {
 
     list () {
       return this.$route.matched
+    }
+  },
+  created () {
+    bus.$on('is_image_canvas', this.toggleIsImageCanvas)
+  },
+  methods: {
+    toggleIsImageCanvas (bIsImageCanvas) {
+      this.isImageCanvas = bIsImageCanvas
     }
   }
 }

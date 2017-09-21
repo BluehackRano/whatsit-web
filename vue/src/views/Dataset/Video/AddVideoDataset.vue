@@ -50,8 +50,10 @@
       </div>
 
       <div class="trim-info-list">
-        <div class="animated fadeIn">
-          <div class="col-sm-12 col-md-12 trim-info-item" v-for="(trimInfo, index) in trimInfoList">
+
+        <!--<div class="animated fadeIn">-->
+        <transition-group class="animated fadeIn" name="section-item" tag="div">
+          <div class="col-sm-12 col-md-12 trim-info-item" v-for="(trimInfo, index) in trimInfoList" :key="index">
 
             <div class="delete-trim-info-button" @click="deleteTrimInfoButtonClicked(index)">
               <h3>X</h3>
@@ -70,7 +72,7 @@
             </div>
 
           </div>
-        </div>
+        </transition-group>
       </div>
 
       <div class="bottom-buttons-container">
@@ -140,7 +142,8 @@
       sectionValueChanged: function (index) {
         let currentTrimInfo = this.trimInfoList[index]
 
-        let splitSection = currentTrimInfo.sectionInput.split('	')
+//        let splitSection = currentTrimInfo.sectionInput.split('	')
+        let splitSection = currentTrimInfo.sectionInput.split(/[	 ,~]/g)
 
         let splitStartTime = splitSection[0].split(':')
         let splitEndTime = splitSection[1].split(':')
@@ -164,15 +167,63 @@
           return
         }
 
-        for (let i = 0; i < this.trimInfoList.length; i++) {
-          console.log(this.trimInfoList[i])
-        }
+        this.addDataset()
       },
       backToVideoLinkButtonClicked: function () {
         this.viewType = 'Link'
       },
       cancelAddVideoDataset: function () {
         this.$router.replace({ path: '/project/' + this.projectId + '/createDataset' })
+      },
+
+      addDataset: function () {
+        alert('59b686a6adc71eb86c669725')
+
+        var options = {
+          projectId: this.projectId, // '59b686a6adc71eb86c669725', // this.projectId, // '59bb6db5adc71eb86c739029',
+          name: this.videoName,
+          desc: 'This dataset is made by whatsit-web',
+          type: 'video',
+        }
+
+        options.data = []
+
+        var data = {
+          name: 'video_' + this.videoName,
+          source: this.videoLinkURL, // 'http://0.s3.envato.com/h264-video-previews/80fad324-9db4-11e3-bf3d-0050569255a8/490527.mp4', // this.videoLinkURL,
+          sections: []
+        };
+
+        let sections = []
+        for (let i = 0; i < this.trimInfoList.length; i++) {
+          let section = []
+          let trimInfo = this.trimInfoList[i]
+
+          section.push(this.calcTimeToSeconds(trimInfo.startHour, trimInfo.startMin, trimInfo.startSec))
+          section.push(this.calcTimeToSeconds(trimInfo.endHour, trimInfo.endMin, trimInfo.endSec))
+
+          sections.push(section)
+        }
+        data.sections = sections
+
+        options.data.push(data)
+
+        this.requestAddDataset(options)
+      },
+
+      requestAddDataset: function (options) {
+        // request API
+        return this.$store.dispatch('ADD_DATASET', {
+          options: options
+        }).then(() => {
+          console.log('done ADD_DATASET in AddVideoDataset.vue')
+          this.$router.replace({ path: '/project/' + this.projectId + '/datasets' })
+          bus.$emit('fetch_datasets')
+        })
+      },
+
+      calcTimeToSeconds: function (h, m, s) {
+        return h * 3600 + m * 60 + s
       }
     }
   }
@@ -343,6 +394,14 @@
   .bottom-buttons-container > div > div > .trim-info-bottom-buttons {
     height: 80px;
     margin-top: 10px;
+  }
+
+  .section-item-enter-active, .section-item-leave-active {
+    transition: all 0.5s;
+  }
+  .section-item-enter, .section-item-leave-to {
+    opacity: 0;
+    transform: translateX(50px);
   }
 
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="videoCanvasAll">
     <!--<p>To resume a previous annotation, select a frames zip archive: <input type="file" id="zipFile" ref="zipFile" accept=".zip" @change="extractFramesFromZip" /></p>-->
 
     <ol>
@@ -22,19 +22,23 @@
           <table border="1">
             <tr>
               <td>New Box</td>
-              <td>Ctrl</td>
+              <td style="text-align: center">Ctrl</td>
+            </tr>
+            <tr>
+              <td>Cancel</td>
+              <td style="text-align: center">ESC</td>
             </tr>
             <tr>
               <td>Play / Pause</td>
-              <td>SpaceBar</td>
+              <td style="text-align: center">SpaceBar</td>
             </tr>
             <tr>
               <td>Previous Frame</td>
-              <td><-</td>
+              <td style="text-align: center"><-</td>
             </tr>
             <tr>
               <td>Next Frame</td>
-              <td>-></td>
+              <td style="text-align: center">-></td>
             </tr>
           </table>
         <div id="slider" ref="slider"></div>
@@ -45,6 +49,7 @@
         <p><input type="button" id="generateXml" value="Generate" disabled="true" /> the <a href="http://web.mit.edu/vondrick/vatic/" target="new">vatic</a>-compatible XML annotations file.</p>
       </li>
     </ol>
+    <button type="button" class="btn btn-danger btn-lg btn-block" @click="save"><b>Save</b></button>
   </div>
 </template>
 
@@ -54,11 +59,14 @@
   import { JSZIP } from './jszip'
   let nudged = require('./nudged')
   import interactJs from 'interactjs'
+  import jquery from 'jquery'
 
   export default {
     name: 'VideoCanvas',
     data: function () {
       return {
+        datasetId: '',
+        currentDataset: null,
         vaticConfig: {
           // Should be higher than real FPS to not skip real frames
           // Hardcoded due to JS limitations
@@ -72,7 +80,8 @@
           imageExtension: '.jpg',
 
           // Name of the extracted frames zip archive
-          framesZipFilename: 'extracted-frames.zip'
+          framesZipFilename: 'gonghyojin_final.zip'
+//          framesZipFilename: 'extracted-frames.zip'
         },
         speed: 3.0,
         currentFrame: 0,
@@ -90,11 +99,18 @@
         pauseButton: null,
         sliderElement: null,
         videoDimensionsElement: null,
-        extractionProgressElement: null
+        extractionProgressElement: null,
+        videoWidth: 0,
+        videoHeight: 0
       }
     },
     created: function () {
+      this.datasetId = this.$route.params.datasetId
+      if (this.datasetId === '' || this.datasetId === null || this.datasetId === undefined) {
+        return
+      }
 
+      this.getVideoData()
     },
     mounted: function () {
       this.doodle = this.$refs.doodle
@@ -325,7 +341,10 @@
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200){
-            // console.log(this.response, typeof this.response);
+            console.log('Success !')
+            console.log(this.response, typeof this.response);
+            console.log(typeof this.response)
+
             promise = self.extractFramesFromZip(self.vaticConfig, this.response)
 
             promise.then((frames) => {
@@ -349,6 +368,9 @@
                     self.player.ready()
 
                     self.playButton.disabled = false
+
+                    self.videoWidth = img.width
+                    self.videoHeight = img.height
                   })
                 })
               }
@@ -356,7 +378,10 @@
             })
           }
         }
-        xhr.open('GET', '/static/extracted-frames.zip');
+//        xhr.open('GET', '/static/gonghyojin_final.zip')
+        xhr.open('GET', this.currentDataset.frames);
+        xhr.setRequestHeader('Access-Control-Allow-Origin', '*')
+        xhr.setRequestHeader('Access-Control-Allow-Headers', '*')
         xhr.responseType = 'blob';
         xhr.send();
 
@@ -367,14 +392,15 @@
           JSZip
             .loadAsync(file)
             .then((zip) => {
-              let totalFrames = 0;
-              for (let i = 0; ; i++) {
-                let file = zip.file(i + config.imageExtension);
-                if (file == null) {
-                  totalFrames = i;
-                  break;
-                }
-              }
+//              let totalFrames = 0;
+//              for (let i = 0; ; i++) {
+//                let file = zip.file(i + config.imageExtension);
+//                if (file == null) {
+//                  totalFrames = i;
+//                  break;
+//                }
+//              }
+              let totalFrames = this.currentDataset.images.length
 
               resolve({
                 totalFrames: () => {
@@ -382,7 +408,8 @@
                 },
                 getFrame: (frameNumber) => {
                   return new Promise((resolve, _) => {
-                    let file = zip.file(frameNumber + config.imageExtension);
+//                    let file = zip.file(frameNumber + config.im
+                    let file = zip.file(this.currentDataset.images[frameNumber].name)
                     file
                       .async('arraybuffer')
                       .then((content) => {
@@ -396,40 +423,48 @@
         });
       },
 
-      interactify: function (dom, onChange) {
-        let bbox = $(dom);
-        bbox.addClass('bbox');
-
-        let createHandleDiv = (className) => {
-          let handle = document.createElement('div');
-          handle.className = className;
-          bbox.append(handle);
-          return handle;
-        };
-
-        bbox.resizable({
-          containment: 'parent',
-          handles: {
-            n: createHandleDiv('ui-resizable-handle ui-resizable-n'),
-            s: createHandleDiv('ui-resizable-handle ui-resizable-s'),
-            e: createHandleDiv('ui-resizable-handle ui-resizable-e'),
-            w: createHandleDiv('ui-resizable-handle ui-resizable-w')
-          },
-          stop: (e, ui) => {
-            let position = bbox.position();
-            onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
-          }
-        });
-
-        bbox.draggable({
-          containment: 'parent',
-          handle: createHandleDiv('handle center-drag'),
-          stop: (e, ui) => {
-            let position = bbox.position();
-            onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
-          }
-        });
-      },
+//      interactify: function (dom, onChange) {
+//
+//        console.log(dom)
+//        let bbox = $(dom);
+//        console.log(bbox)
+//        bbox.addClass('bbox');
+//
+////        console.log(dom)
+////        jquery(dom).addClass('bbox');
+////        let bbox = jquery(dom)
+////        console.log(bbox)
+//
+//        let createHandleDiv = (className) => {
+//          let handle = document.createElement('div');
+//          handle.className = className;
+//          bbox.append(handle);
+//          return handle;
+//        };
+//
+//        bbox.resizable({
+//          containment: 'parent',
+//          handles: {
+//            n: createHandleDiv('ui-resizable-handle ui-resizable-n'),
+//            s: createHandleDiv('ui-resizable-handle ui-resizable-s'),
+//            e: createHandleDiv('ui-resizable-handle ui-resizable-e'),
+//            w: createHandleDiv('ui-resizable-handle ui-resizable-w')
+//          },
+//          stop: (e, ui) => {
+//            let position = bbox.position();
+//            onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
+//          }
+//        });
+//
+//        bbox.draggable({
+//          containment: 'parent',
+//          handle: createHandleDiv('handle center-drag'),
+//          stop: (e, ui) => {
+//            let position = bbox.position();
+//            onChange(Math.round(position.left), Math.round(position.top), Math.round(bbox.width()), Math.round(bbox.height()));
+//          }
+//        });
+//      },
 
       newBboxElement: function () {
         let dom = document.createElement('div');
@@ -604,6 +639,12 @@
           console.log(annotatedObject)
           this.tmpAnnotatedObject = null;
 
+          this.addAnnotatedObjectControls(annotatedObject);
+
+          this.doodle.style.cursor = 'default';
+
+          e.preventDefault()
+
 //          this.interactify(
 //            annotatedObject.dom,
 //            (x, y, width, height) => {
@@ -613,7 +654,6 @@
 //          );
 
           let self = this
-
           interactJs.interact('.bbox')
             .draggable({
               // enable inertial throwing
@@ -624,15 +664,54 @@
                 endOnly: true,
                 elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
               },
-              onmove: window.dragMoveListener
+              autoScroll: true,
             })
             .resizable({
               preserveAspectRatio: false,
               edges: { left: true, right: true, bottom: true, top: true },
-              margin: 10
+              restrict: {
+                endOnly: true
+              },
+              margin: 10,
+            })
+            .on('dragmove', function (event) {
+              if (event.target !== annotatedObject.dom) {
+                return
+              }
+
+              var target = event.target,
+                // keep the dragged position in the data-x/data-y attributes
+                x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+                y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+              // translate the element
+              target.style.webkitTransform =
+                target.style.transform =
+                  'translate(' + x + 'px, ' + y + 'px)';
+
+              // update the posiion attributes
+              target.setAttribute('data-x', x);
+              target.setAttribute('data-y', y);
+
+            })
+            .on('dragend', function (event) {
+              if (event.target !== annotatedObject.dom) {
+                return
+              }
+              let target = event.target
+              let x = parseInt(target.style.left.replace('px', '')) + parseInt(target.getAttribute('data-x'))
+              let y = parseInt(target.style.top.replace('px', '')) + parseInt(target.getAttribute('data-y'))
+              let width = parseInt(target.style.width.replace('px', ''))
+              let height = parseInt(target.style.height.replace('px', ''))
+              let bbox = new BoundingBox(x, y, width, height)
+//                console.log(bbox)
+              console.log(annotatedObject)
+              annotatedObject.add(new AnnotatedFrame(self.player.currentFrame, bbox, true))
             })
             .on('resizemove', function (event) {
-              // console.log(event.rect)
+              if (event.target !== annotatedObject.dom) {
+                return
+              }
 
               var target = event.target,
                 x = (parseFloat(target.getAttribute('data-x')) || 0),
@@ -651,49 +730,23 @@
 
               target.setAttribute('data-x', x);
               target.setAttribute('data-y', y);
-              target.textContent = Math.round(event.rect.width) + '×' + Math.round(event.rect.height);
+
             })
             .on('resizeend', function (event) {
-              var target = event.target,
-                x = (parseFloat(target.getAttribute('data-x')) || 0),
-                y = (parseFloat(target.getAttribute('data-y')) || 0);
-
-              annotatedObject.frames[self.currentFrame].bbox.x = parseInt(target.style.left.replace('px', '')) + x
-              annotatedObject.frames[self.currentFrame].bbox.y = parseInt(target.style.top.replace('px', '')) + y
-              annotatedObject.frames[self.currentFrame].bbox.width = parseInt(target.style.width.replace('px', ''))
-              annotatedObject.frames[self.currentFrame].bbox.height = parseInt(target.style.height.replace('px', ''))
-
+              if (event.target !== annotatedObject.dom) {
+                return
+              }
+              let target = event.target
+              let x = parseInt(target.style.left.replace('px', '')) + parseInt(target.getAttribute('data-x'))
+              let y = parseInt(target.style.top.replace('px', '')) + parseInt(target.getAttribute('data-y'))
+              let width = parseInt(target.style.width.replace('px', ''))
+              let height = parseInt(target.style.height.replace('px', ''))
+              let bbox = new BoundingBox(x, y, width, height)
+//                console.log(bbox)
               console.log(annotatedObject)
-            })
-            .on('dragmove', function (event) {
-              var target = event.target,
-                // keep the dragged position in the data-x/data-y attributes
-                x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-                y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-              // translate the element
-              target.style.webkitTransform =
-                target.style.transform =
-                  'translate(' + x + 'px, ' + y + 'px)';
-
-              // update the posiion attributes
-              target.setAttribute('data-x', x);
-              target.setAttribute('data-y', y);
-            })
-            .on('dragend', function (event) {
-              var target = event.target,
-                x = (parseFloat(target.getAttribute('data-x')) || 0),
-                y = (parseFloat(target.getAttribute('data-y')) || 0);
-
-              annotatedObject.frames[self.currentFrame].bbox.x = parseInt(target.style.left.replace('px', '')) + x
-              annotatedObject.frames[self.currentFrame].bbox.y = parseInt(target.style.top.replace('px', '')) + y
-
-              console.log(annotatedObject)
+              annotatedObject.add(new AnnotatedFrame(self.player.currentFrame, bbox, true))
             })
 
-          this.addAnnotatedObjectControls(annotatedObject);
-
-          this.doodle.style.cursor = 'default';
         } else {
           this.mouse.startX = e.offsetX
           this.mouse.startY = e.offsetY
@@ -705,6 +758,338 @@
           dom.style.top = this.mouse.startY + 'px';
           this.tmpAnnotatedObject = { dom: dom };
         }
+      },
+
+      save: function () {
+        let req = this.generateUpdateRequest()
+        console.log(JSON.stringify(req))
+        this.requestUpdateDataset(req)
+
+      },
+
+      generateUpdateRequest: function () {
+
+        var imageObject
+        var imageObjectList = []
+        var objectObject
+        var objectObjectList
+        var objectLabelList
+        var labels = []
+
+        let error = false
+        for (let frameNumber = 0; frameNumber < this.totalFrames; frameNumber++) {
+          console.log(' ##### Frame No : ' + frameNumber + ' ##### ')
+          if (error) {
+            return
+          }
+          imageObject = new Object()
+          imageObject.name = this.currentDataset.images[frameNumber].name
+          imageObject.segmented = 0
+          imageObject.w = this.videoWidth
+          imageObject.h = this.videoHeight
+
+          objectObjectList = []
+          objectLabelList = []
+          let annotatedObject
+          let annotatedFrame
+          let bbox
+          for (let i = 0; i < this.annotatedObjectsTracker.annotatedObjects.length; i++) {
+
+            annotatedObject = this.annotatedObjectsTracker.annotatedObjects[i]
+            console.log(' - ' + annotatedObject.name + ' - ')
+
+            if (frameNumber == 0) {
+              labels.push(annotatedObject.name)
+            }
+
+            annotatedFrame = annotatedObject.get(frameNumber)
+            if (annotatedFrame == null) {
+              error = true
+              window.alert('비디오를 처음부터 끝까지 한번 재생해야 합니다.')
+              return
+            }
+
+            bbox = annotatedFrame.bbox
+            if (bbox != null) {
+
+              console.log('(' + bbox.x + ' , ' + bbox.y + ') | ' + bbox.width + ' / ' + bbox.height)
+              objectObject = new Object()
+              objectObject.type = 'polygon'
+              objectObject.polygons = [
+                [bbox.x, bbox.y],
+                [bbox.x + bbox.width, bbox.y],
+                [bbox.x + bbox.width, bbox.y + bbox.height],
+                [bbox.x, bbox.y + bbox.height],
+              ]
+              objectObject.difficult = 0
+              objectObject.occluded = 0
+              objectObject.label = annotatedObject.name
+              objectObject.pose = 'Unspecified'
+
+              objectObjectList.push(objectObject)
+              objectLabelList.push(annotatedObject.name)
+            }
+            else {
+              console.log('X')
+            }
+          }
+          imageObject.objects = objectObjectList
+          imageObject.labels = objectLabelList
+
+          imageObjectList.push(imageObject)
+        }
+
+        var dataObject = {
+          images: imageObjectList
+        }
+
+        var reqDataObjectList = []
+        reqDataObjectList.push(dataObject)
+
+        var req = {
+          type: 'video',
+          data: reqDataObjectList
+        }
+        return req
+      },
+
+//      generateUpdateRequestExample: function () {
+//        // '59bb6db5adc71eb86c739029' : projectId
+//        // '59bb90e9c8729c0010ab893a' : datasetId
+//
+//        var imgaeObject
+//        var reqImages = []
+//
+//        for (let i = 0; i < this.annotatedObjectsTracker.annotatedObjects.length; i++) {
+//          let annotatedObject = annotatedObjectsTracker.annotatedObjects[i]
+//        }
+//
+//
+//          for (let i=0; i<=150; i++) {
+//
+//          if (i==4) {
+//            imgaeObject = {
+//              uri: 's3://www.bluehack.net/' + i + '.jpg',
+//              name: i + '.jpg',
+//              segmented: 0,
+//              w: 1920,
+//              h: 1080,
+//              objects: [{
+//                type: 'polygon',
+//                polygons: [
+//                  [1271, 848],
+//                  [1443, 848],
+//                  [1443, 999],
+//                  [1271, 999],
+//                ],
+//                difficult: 0,
+//                occluded: 0,
+//                label: 'bag',
+//                pose: 'Unspecified'
+//              }]
+//            }
+//          }
+//          else if (i==5) {
+//            imgaeObject = {
+//              uri: 's3://www.bluehack.net/' + i + '.jpg',
+//              name: i + '.jpg',
+//              segmented: 0,
+//              w: 1920,
+//              h: 1080,
+//              objects: [
+//                {
+//                  type: 'polygon',
+//                  polygons: [
+//                    [1261, 838],
+//                    [1433, 838],
+//                    [1433, 989],
+//                    [1261, 989],
+//                  ],
+//                  difficult: 0,
+//                  occluded: 0,
+//                  labels: 'bag',
+//                  pose: 'Unspecified'
+//                },
+//                {
+//                  type: 'polygon',
+//                  polygons: [
+//                    [60, 582],
+//                    [192, 582],
+//                    [192, 952],
+//                    [60, 952],
+//                  ],
+//                  difficult: 0,
+//                  occluded: 0,
+//                  label: 'jea',
+//                  pose: 'Unspecified'
+//                }
+//              ]
+//            }
+//          }
+//          else if (i==6) {
+//            imgaeObject = {
+//              uri: 's3://www.bluehack.net/' + i + '.jpg',
+//              name: i + '.jpg',
+//              segmented: 0,
+//              w: 1920,
+//              h: 1080,
+//              objects: [
+//                {
+//                  type: 'polygon',
+//                  polygons: [
+//                    [1250, 828],
+//                    [1417, 828],
+//                    [1417, 979],
+//                    [1250, 979],
+//                  ],
+//                  difficult: 0,
+//                  occluded: 0,
+//                  label: 'bag',
+//                  pose: 'Unspecified'
+//                },
+//                {
+//                  type: 'polygon',
+//                  polygons: [
+//                    [60, 575],
+//                    [190, 575],
+//                    [190, 945],
+//                    [60, 945],
+//                  ],
+//                  difficult: 0,
+//                  occluded: 0,
+//                  label: 'jea',
+//                  pose: 'Unspecified'
+//                }
+//              ]
+//            }
+//
+//          }
+//          else if (i==7) {
+//            imgaeObject = {
+//              uri: 's3://www.bluehack.net/' + i + '.jpg',
+//              name: i + '.jpg',
+//              segmented: 0,
+//              w: 1920,
+//              h: 1080,
+//              objects: [{
+//                type: 'polygon',
+//                polygons: [
+//                  [60, 571],
+//                  [181, 571],
+//                  [181, 941],
+//                  [60, 941],
+//                ],
+//                difficult: 0,
+//                occluded: 0,
+//                label: 'jea',
+//                pose: 'Unspecified'
+//              }]
+//            }
+//          }
+//          else {
+//            imgaeObject = {
+//              uri: 's3://www.bluehack.net/' + i + '.jpg',
+//              name: i + '.jpg',
+//              segmented: 0,
+//              w: 1920,
+//              h: 1080,
+//              objects: []
+//            }
+//          }
+//          reqImages.push(imgaeObject)
+//        }
+//
+//        var reqData = []
+//        var dataObject = {
+//          images: reqImages,
+//          labels: ['bag', 'jea']
+//        }
+//        reqData.push(dataObject)
+//
+//        var req = {
+//          type: 'video',
+//          data: reqData
+//        }
+//
+//        console.log('save req')
+//        console.log(JSON.stringify(req))
+//
+//
+//        this.requestUpdateDataset(req)
+//      },
+      getVideoData: function () {
+        this.requestGetData()
+      },
+      requestGetData: function () {
+        return this.$store.dispatch('FETCH_DATASET', {
+          datasetId: this.datasetId // '59c212e4813cc0000f558c39'
+        }).then(() => {
+          console.log('done FETCH_DATASET in VideoCanvas.vue')
+          console.log(this.$store.state.currentDataset)
+          this.currentDataset = this.$store.state.currentDataset
+
+          this.extractFramesFromZipClicked()
+        })
+      },
+      requestUpdateDataset: function (req) {
+        // requestUpdateDataset API
+        return this.$store.dispatch('UPDATE_DATASET', {
+          options: req,
+          datasetId: this.datasetId // '59c212e4813cc0000f558c39'
+        }).then(() => {
+          console.log('done UPDATE_DATASET in VideoCanvas.vue')
+
+        })
+      },
+      resizeMoveListener(event, annotatedObject) {
+        var target = event.target,
+          // keep the dragged position in the data-x/data-y attributes
+          x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+          y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+        // translate the element
+        target.style.webkitTransform =
+          target.style.transform =
+            'translate(' + x + 'px, ' + y + 'px)';
+
+        // update the posiion attributes
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+      },
+      dragMoveListener (event, annotatedObject) {
+        var target = event.target,
+          // keep the dragged position in the data-x/data-y attributes
+          x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+          y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+        // translate the element
+        target.style.webkitTransform =
+          target.style.transform =
+            'translate(' + x + 'px, ' + y + 'px)';
+
+        // update the posiion attributes
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+
+
+
+//        var target = event.target,
+//          x = (parseFloat(target.getAttribute('data-x')) || 0),
+//          y = (parseFloat(target.getAttribute('data-y')) || 0);
+//
+//        // update the element's style
+//        target.style.width  = event.rect.width + 'px';
+//        target.style.height = event.rect.height + 'px';
+//
+//        // translate when resizing from top or left edges
+//        x += event.deltaRect.left;
+//        y += event.deltaRect.top;
+//
+//        target.style.webkitTransform = target.style.transform =
+//          'translate(' + x + 'px,' + y + 'px)';
+//
+//        target.setAttribute('data-x', x);
+//        target.setAttribute('data-y', y);
       }
     }
   }
@@ -720,6 +1105,10 @@
     /*height: 500px;*/
     /*background-color: #00bf8f;*/
   /*}*/
+
+  #videoCanvasAll {
+    overflow-x: auto;
+  }
 
   .output { font-family: monospace; font-weight: bold; }
 

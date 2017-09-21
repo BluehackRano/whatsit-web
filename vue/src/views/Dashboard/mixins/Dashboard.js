@@ -59,12 +59,7 @@ export const Dashboard = {
 
     this.$store.watch(this.$store.getters.rawImgList,
       () => {
-        this.rawImgList = this.$store.state.rawImgList
-        this.rawImgIndex = 0
-        this.imgSrc = this.rawImgList[0].uri
-        this.$refs.cropper.replace(this.imgSrc)
-
-        bus.$emit('reset_memo', this.rawImgList[0].labels[0])
+        this.resetImageList()
       }
     )
   },
@@ -75,7 +70,16 @@ export const Dashboard = {
   },
 
   methods: {
-    toAddProject: function () {
+    resetImageList () {
+      this.rawImgList = this.$store.state.rawImgList
+      this.rawImgIndex = 0
+      this.imgSrc = this.rawImgList[0].uri
+      this.$refs.cropper.replace(this.imgSrc)
+
+      bus.$emit('reset_memo', this.rawImgList[0].labels[0])
+    },
+
+    toAddProject: () {
       console.log('on click to dashboard button')
       this.$router.push('/projects/add')
     },

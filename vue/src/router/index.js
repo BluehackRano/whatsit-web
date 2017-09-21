@@ -158,7 +158,7 @@ export function createRouter () {
             component: Dashboard
           },
           {
-            path: 'app/video',
+            path: 'canvas/video/:datasetId',
             name: 'VideoCanvas',
             component: VideoCanvas
           }

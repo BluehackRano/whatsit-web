@@ -50,12 +50,22 @@
 import VueCropper from 'vue-cropperjs';
 import {Dashboard} from './mixins/Dashboard'
 
+import bus from '../../util/bus'
+
 export default {
   name: 'dashboard',
   mixins: [Dashboard],
 
   components: {
     VueCropper
+  },
+
+  created () {
+    bus.$emit('is_image_canvas', true)
+  },
+
+  beforeDestry () {
+    bus.$emit('is_image_canvas', false)
   },
 
   methods: {

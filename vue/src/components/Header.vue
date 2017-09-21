@@ -30,6 +30,9 @@
       <li>
         <span> &nbsp; </span>
       </li>
+      <li v-if="isImageCanvas" class="nav-item d-md-down-none">
+        <a class="nav-link navbar-toggler aside-menu-toggler" href="#" @click="asideToggle">&#9776;</a>
+      </li>
     </ul>
   </navbar>
 </template>
@@ -39,19 +42,26 @@ import navbar from './Navbar'
 import { dropdown } from 'vue-strap'
 import { Header } from './mixins/Header'
 
+import bus from '../util/bus'
+
 export default {
   name: 'header',
   mixins: [Header],
 
   data: function () {
     return {
-      profileUrl: '/static/img/avatars/default_avatar.png'
+      profileUrl: '/static/img/avatars/default_avatar.png',
+      isImageCanvas: false
     }
   },
 
   components: {
     navbar,
     dropdown
+  },
+
+  created () {
+    bus.$on('is_image_canvas', this.toggleIsImageCanvas)
   },
 
   methods: {
@@ -65,12 +75,14 @@ export default {
     mobileSidebarToggle (e) {
       e.preventDefault()
       document.body.classList.toggle('sidebar-mobile-show')
+    },
+    asideToggle (e) {
+      e.preventDefault()
+      document.body.classList.toggle('aside-menu-hidden')
+    },
+    toggleIsImageCanvas (bIsImageCanvas) {
+      this.isImageCanvas = bIsImageCanvas
     }
-//    ,
-//    asideToggle (e) {
-//      e.preventDefault()
-//      document.body.classList.toggle('aside-menu-hidden')
-//    }
   }
 }
 

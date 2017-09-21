@@ -23,6 +23,10 @@ Vue.mixin({
   }
 })
 
+// Using $bus instance as global ex) this.$bus.$emit / this.$bus.$on
+// const bus = new Vue()
+// Vue.prototype.$bus = bus
+
 /* eslint-disable no-new */
 // new Vue({
 //   el: '#app',

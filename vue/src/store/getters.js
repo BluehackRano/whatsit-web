@@ -28,6 +28,8 @@ export default {
 
   projectList: state => () => state.projectList,
 
+  currentDataset: state => () => state.currentDataset,
+
   rawImgList: state => () => state.rawImgList,
 
   cropImgList: state => () => state.cropImgList

@@ -14,7 +14,8 @@
 </template>
 
 <script>
-  // import {Projects} from './mixins/Projects'
+  import bus from '../../util/bus'
+
   export default {
     name: 'createProject',
     data: function () {
@@ -28,16 +29,33 @@
           return
         }
 
-        this.$store.state.projectList.push({
-          id: Math.floor((Math.random() * 100) + 1),
-          name: this.projectName,
-          thumbnail: '/static/img/bg3.jpeg'
-        })
+//        this.$store.state.projectList.push({
+//          id: Math.floor((Math.random() * 100) + 1),
+//          name: this.projectName,
+//          thumbnail: '/static/img/bg3.jpeg'
+//        })
+
         // call addProject API
-        this.$router.replace('/project/projects')
+        this.requestAddProject()
       },
       cancelProject: function () {
         this.$router.replace('/project/projects')
+      },
+      requestAddProject: function () {
+
+        let options = {
+          name: this.projectName,
+          userId: this.$store.state.userId,
+          thumbnail: '/static/img/bg3.jpeg'
+        }
+
+        this.$store.dispatch('ADD_PROJECT', {
+          options: options
+        }).then(() => {
+          console.log('done ADD_PROJECT in createProject.vue')
+          this.$router.replace('/project/projects')
+          bus.$emit('fetch_projects')
+        })
       }
     }
   }

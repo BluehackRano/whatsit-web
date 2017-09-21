@@ -16,7 +16,7 @@
         </div>
 
         <div class="col-sm-6 col-md-4" v-for="(project, index) in projectList" :key="project.id"
-             @click="projectClicked(project.id)">
+             @click="projectClicked(project._id)">
           <div class="card project-card-item">
             <img src="/static/img/bg3.jpeg">
             <!--<div class="dropdown more-button">-->
@@ -29,6 +29,7 @@
             <!--</div>-->
             <div class="card-footer">
               {{ project.name }}
+              <button type="button" class="btn btn-secondary btn-sm" @click="exportButtonClicked($event, project._id)"><i class="fa fa-download" aria-hidden="true"></i></button>
             </div>
           </div>
         </div><!--/.col-->
@@ -39,7 +40,8 @@
 </template>
 
 <script>
-  // import {Projects} from './mixins/Projects'
+  import bus from '../../util/bus'
+
   export default {
     name: 'Projects',
     data: function () {
@@ -48,7 +50,15 @@
       }
     },
     created: function () {
-
+      this.$store.watch(this.$store.getters.userId,
+        () => {
+          this.requestFetchProjects()
+        },
+        {
+          deep: true // add this if u need to watch object properties change etc.
+        }
+      )
+      bus.$on('fetch_projects', this.requestFetchProjects)
     },
     methods: {
       createProjectButtonClicked: function () {
@@ -56,6 +66,30 @@
       },
       projectClicked: function (projectId) {
         this.$router.push({ path: '/project/' + projectId + '/datasets' })
+      },
+      exportButtonClicked: function (event, projectId) {
+        console.log(`exportButtonClicked : ${projectId}`)
+        event.stopPropagation()
+
+        this.requestGetTrainset(projectId)
+      },
+      requestFetchProjects: function () {
+        this.$store.dispatch('FETCH_PROJECTS', {
+          userId: this.$store.state.userId
+        }).then(() => {
+          console.log('done FETCH_PROJECTS in Projects.vue')
+        })
+      },
+      requestGetTrainset (projectId) {
+        let options = {
+          format: 'pascalvoc'
+        }
+        this.$store.dispatch('GET_PROJECT_TRAINSET', {
+          projectId: projectId,
+          options: options
+        }).then(() => {
+          console.log('done GET_PROJECT_TRAINSET in Projects.vue')
+        })
       }
     }
   }
@@ -92,6 +126,12 @@
 
   div > .card-footer {
     height: 50px;
+  }
+
+  div > .card-footer > button {
+    right: 0;
+    /*position: absolute;*/
+    float: right;
   }
 
   div > .card-footer > #more-button {

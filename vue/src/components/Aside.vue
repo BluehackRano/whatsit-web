@@ -63,8 +63,10 @@ import {Aside} from './mixins/Aside'
 
 export default {
   name: 'aside',
-  mixins: [Aside]
-
+  mixins: [Aside],
+  created () {
+    document.body.classList.remove('aside-menu-hidden')
+  }
 }
 </script>
 

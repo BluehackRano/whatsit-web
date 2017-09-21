@@ -46,6 +46,35 @@ export default {
     })
   },
 
+  ADD_PROJECT: (state, { project }) => {
+    // Vue.set(state.projects, repo.id, repo)
+  },
+
+  SET_PROJECTS: (state, { projects }) => {
+    state.projectList.splice(0, state.projectList.length)
+    projects.forEach(project => {
+      if (project) {
+        state.projectList.push(project)
+        // console.log(project)
+        // console.log('SET_REPOS:' + repo.id)
+      }
+    })
+  },
+
+  SET_DATASETS: (state, { datasets }) => {
+    state.datasetList.splice(0, state.datasetList.length)
+    datasets.forEach(dataset => {
+      if (dataset) {
+        state.datasetList.push(dataset)
+        console.log(dataset)
+      }
+    })
+  },
+
+  SET_DATASET: (state, { currentDataset }) => {
+    state.currentDataset = currentDataset
+  },
+
   SET_USER: (state, { id, user }) => {
     Vue.set(state.users, id, user || false) /* false means user not found */
   },
@@ -58,9 +87,9 @@ export default {
     state.activeInstanceId = instanceId
   },
 
-  ADD_PROJECT: (state, { repo }) => {
-    Vue.set(state.projects, repo.id, repo)
-  },
+  // ADD_PROJECT: (state, { repo }) => {
+  //   Vue.set(state.projects, repo.id, repo)
+  // },
 
   SET_PROFILE: (state, { profile }) => {
     Vue.set(state.profile, 'me', profile)

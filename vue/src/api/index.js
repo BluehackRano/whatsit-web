@@ -1,8 +1,8 @@
 // this is aliased in webpack config based on server/client build
 import { createAPI } from 'create-api'
 import GitHub from 'github-api'
-// import WhatsIt from 'whatsit-sdk-js'
-import WhatsIt from '../../../../../.'
+import WhatsIt from 'whatsit-sdk-js'
+// import WhatsIt from '/Users/daesubkim/Desktop/WhatsIt/whatsit-sdk-js/dist/WhatsIt'
 
 let auth = require('../util/auth')
 
@@ -115,6 +115,123 @@ export function fetchProfile (token) {
   }
 }
 
+// /projects  GET
+export function fetchProjects (userId) {
+  return new Promise ((resolve, reject) => {
+    var whatsit = new WhatsIt({})
+    var data = {
+      userId: userId
+    }
+    whatsit.getProject().getProjectsByUser(data).then(res => {
+      // console.log(res)
+      resolve(res.data.data.projects)
+    }).catch(err => {
+      console.log(err)
+      reject(err)
+    })
+  })
+}
+
+// /projects	POST
+export function addProject (project) {
+  return new Promise ((resolve, reject) => {
+    var whatsit = new WhatsIt({})
+    whatsit.getProject().addProject(project).then(res => {
+      console.log(res)
+      resolve(res.data)
+    }).catch(err => {
+      console.log(err)
+      reject(err)
+    })
+  })
+}
+
+// /projects/{projectId}/trainset	GET
+export function getProjectTrainset (projectId, options) {
+  return new Promise ((resolve, reject) => {
+    var whatsit = new WhatsIt({})
+    whatsit.getProject().getTrainset(projectId, options).then(res => {
+      console.log(res)
+      // resolve(res)
+    }).catch(err => {
+      console.log(err)
+      reject(err)
+    })
+  })
+}
+
+// /datasets  GET
+export function fetchDatasets (projectId) {
+  return new Promise ((resolve, reject) => {
+    var whatsit = new WhatsIt({})
+    var queryParam = {
+      projectId: projectId
+    }
+    whatsit.getDataset().getDatasetByProjectId(queryParam).then(res => {
+      console.log(res.data.Datasets)
+      resolve(res.data.data.Datasets)
+    }).catch(err => {
+      console.log(err)
+      reject(err)
+    })
+  })
+}
+
+// /datasets	POST
+export function addDataset (dataset) {
+  return new Promise ((resolve, reject) => {
+    var whatsit = new WhatsIt({})
+    console.log('addDataset API ')
+    console.log(dataset)
+    whatsit.getDataset().addDataset(dataset).then(res => {
+      if (res != null) {
+        console.log(res)
+        resolve(res.data)
+      }
+    }).catch(err => {
+      console.error(err)
+      reject(err)
+    })
+  })
+}
+
+// /datasets/{datasetId} GET
+export function fetchDataset (datasetId) {
+  return new Promise ((resolve, reject) => {
+    var whatsit = new WhatsIt({})
+    console.log('getDataset API ')
+    console.log(datasetId)
+    whatsit.getDataset().getDatasetByDatasetId(datasetId).then(res => {
+      if (res != null) {
+        console.log(res.data.data.data[0])
+        resolve(res.data.data.data[0])
+      }
+    }).catch(err => {
+      console.error(err)
+      reject(err)
+    })
+  })
+}
+
+// /datasets/{datasetId} PUT
+export function updateDataset (options, datasetId) {
+  return new Promise ((resolve, reject) => {
+    var whatsit = new WhatsIt({})
+    console.log('putDataset API ')
+    console.log(options)
+    console.log(datasetId)
+    whatsit.getDataset().putDataset(options, datasetId).then(res => {
+      if (res != null) {
+        console.log(res)
+        resolve(res.data)
+      }
+    }).catch(err => {
+      console.error(err)
+      reject(err)
+    })
+  })
+}
+
 export function fetchRepos(token) {
   return new Promise ((resolve, reject) => {
     var github = new GitHub({token: token})
@@ -220,31 +337,31 @@ export function getRawImages(userId, projectId) {
   })
 }
 
-export function addProject(repo, userId) {
-  return new Promise ((resolve, reject) => {
-    var whatsit = new WhatsIt({})
-
-    console.log('project = ' + repo)
-    var data = {
-      name: repo.name,
-      full_name: repo.full_name,
-      owner: userId,
-      html_url: repo.html_url,
-      git_url: repo.git_url,
-      provider: "github"
-    }
-    console.log(data)
-    whatsit.getProject().addProject(data).then(res => {
-      console.log(res)
-    if (res!= null) {
-      resolve(res.data)
-    }
-  }).catch(err => {
-      console.error(err)
-    reject(err)
-  })
-})
-}
+// export function addProject(repo, userId) {
+//   return new Promise ((resolve, reject) => {
+//     var whatsit = new WhatsIt({})
+//
+//     console.log('project = ' + repo)
+//     var data = {
+//       name: repo.name,
+//       full_name: repo.full_name,
+//       owner: userId,
+//       html_url: repo.html_url,
+//       git_url: repo.git_url,
+//       provider: "github"
+//     }
+//     console.log(data)
+//     whatsit.getProject().addProject(data).then(res => {
+//       console.log(res)
+//     if (res!= null) {
+//       resolve(res.data)
+//     }
+//   }).catch(err => {
+//       console.error(err)
+//     reject(err)
+//   })
+// })
+// }
 
 export function addInstance(projectId) {
   return new Promise ((resolve, reject) => {
