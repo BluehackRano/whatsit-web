@@ -2,10 +2,10 @@
 import Vue from 'vue'
 var DoneItem = Vue.component('done-item', {
   template: '\
-    <div style="width: 100%; height: 100px; border: 1px solid gray;">\
+    <div class="d" style="width: 100%; height: 100px; border: 1px solid gray;">\
       <img :src="imgScr" style="object-fit:contain; width: 100px; height: 100%; border-right: 1px solid gray;" alt="No croppped image." />\
-      <span style="margin-left: 10px; margin-right: 50px;"><b>{{ labelName }}</b></span>\
-      <button type="button" class="btn btn-outline-secondary btn-sm" @click="$emit(\'remove\')"><i class="fa fa-remove fa-lg"></i></button>\
+      <span  style="margin-left: 10px; margin-right: 50px;"><b>{{ labelName }}</b></span>\
+      <button class="close-button" type="button" class="btn btn-outline-secondary btn-sm" @click="$emit(\'remove\')"><i class="fa fa-remove fa-lg"></i></button>\
     </div>\
   ',
   props: ['imgScr', 'labelName']

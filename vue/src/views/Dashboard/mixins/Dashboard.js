@@ -5,11 +5,10 @@ let awProject = aw.getProject()
 import bus from '../../../util/bus'
 
 var imgList = [
-  '/static/img/bg3.jpeg',
-  '/static/img/bg1.jpg',
-  '/static/img/logo-w.png',
-  '/static/img/bg2.jpg',
-
+  { uri: '/static/img/bg3.jpeg' },
+  { uri: '/static/img/bg1.jpg' },
+  { uri: '/static/img/logo-w.png' },
+  { uri: '/static/img/bg2.jpg' },
 ]
 var imgIndex=0
 
@@ -47,21 +46,25 @@ export const Dashboard = {
   created: function () {
     bus.$on('save_and_next_image', this.saveAndNextImage)
 
-    this.$store.watch(this.$store.getters.userId,
-      () => {
-        this.resetRawImgListState()
-        fetchRawImages(this.$store)
-      },
-      {
-        deep: true // add this if u need to watch object properties change etc.
-      }
-    )
+    /* Test Code */
+    this.resetImageList()
 
-    this.$store.watch(this.$store.getters.rawImgList,
-      () => {
-        this.resetImageList()
-      }
-    )
+    /* Original Code */
+    // this.$store.watch(this.$store.getters.userId,
+    //   () => {
+    //     this.resetRawImgListState()
+    //     fetchRawImages(this.$store)
+    //   },
+    //   {
+    //     deep: true // add this if u need to watch object properties change etc.
+    //   }
+    // )
+    //
+    // this.$store.watch(this.$store.getters.rawImgList,
+    //   () => {
+    //     this.resetImageList()
+    //   }
+    // )
   },
 
   mounted: function () {
@@ -71,15 +74,21 @@ export const Dashboard = {
 
   methods: {
     resetImageList () {
-      this.rawImgList = this.$store.state.rawImgList
+      /* Test Code */
+      this.rawImgList = imgList
       this.rawImgIndex = 0
       this.imgSrc = this.rawImgList[0].uri
+
+      /* Original Code */
+      // this.rawImgList = this.$store.state.rawImgList
+      // this.rawImgIndex = 0
+      // this.imgSrc = this.rawImgList[0].uri
       this.$refs.cropper.replace(this.imgSrc)
 
       bus.$emit('reset_memo', this.rawImgList[0].labels[0])
     },
 
-    toAddProject: () {
+    toAddProject () {
       console.log('on click to dashboard button')
       this.$router.push('/projects/add')
     },
