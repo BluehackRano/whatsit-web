@@ -3,6 +3,7 @@ let aw = new WhatsIt()
 let awProject = aw.getProject()
 
 import bus from '../../../util/bus'
+import { getColor } from '../../../util/labelColors'
 
 var imgList = [
   { uri: '/static/img/bg3.jpeg' },
@@ -138,6 +139,8 @@ export const Dashboard = {
           cropBoxTop: cropBoxData.top,
           cropBoxWidth: cropBoxData.width,
           cropBoxHeight: cropBoxData.height,
+          label: '',
+          color: getColor()
         })
     },
 
@@ -180,10 +183,12 @@ export const Dashboard = {
     drawCropBoxes () {
       let ctx = this.bgCanvas.getContext('2d')
       let cropImgList = this.$store.state.cropImgList
+      console.log('drawCropBoxes cropImgList')
+      console.log(cropImgList)
       for (let i in cropImgList) {
         ctx.beginPath()
         ctx.lineWidth = '3'
-        ctx.strokeStyle = 'gray'
+        ctx.strokeStyle = cropImgList[i].color // 'gray'
         ctx.rect(cropImgList[i].cropBoxLeft, cropImgList[i].cropBoxTop, cropImgList[i].cropBoxWidth, cropImgList[i].cropBoxHeight)
         ctx.stroke()
       }

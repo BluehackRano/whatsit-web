@@ -123,7 +123,9 @@ export default {
         cropBoxLeft: cropImg.cropBoxLeft,
         cropBoxTop: cropImg.cropBoxTop,
         cropBoxWidth: cropImg.cropBoxWidth,
-        cropBoxHeight: cropImg.cropBoxHeight
+        cropBoxHeight: cropImg.cropBoxHeight,
+        label: cropImg.label,
+        color: cropImg.color
       })
   }
 }

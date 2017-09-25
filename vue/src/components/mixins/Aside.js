@@ -1,11 +1,18 @@
 
 import Vue from 'vue'
+
+import vSelect from 'vue-select'
+// Vue.component('v-select', vSelect)
+
 var DoneItem = Vue.component('done-item', {
   template: '\
-    <div class="d" style="width: 100%; height: 100px; border: 1px solid gray;">\
-      <img :src="imgScr" style="object-fit:contain; width: 100px; height: 100%; border-right: 1px solid gray;" alt="No croppped image." />\
-      <span  style="margin-left: 10px; margin-right: 50px;"><b>{{ labelName }}</b></span>\
-      <button class="close-button" type="button" class="btn btn-outline-secondary btn-sm" @click="$emit(\'remove\')"><i class="fa fa-remove fa-lg"></i></button>\
+    <div style="width: 100%; height: 100px; border: 1px solid gray;">\
+      <img :src="imgScr" style="object-fit:contain; width: 40%; height: 100%; border-right: 1px solid gray;" alt="No croppped image." />\
+      <div style="position: relative; top:-100px; left: 100px; width: 60%; height: 100%;">\
+        <span style="position: relative; display: inline-block; top:10px; left:10px; width: 10px;"><b>{{ labelName }}</b></span>\
+        <button style="position: relative; top:10px; left: 90px;" type="button" class="btn btn-outline-secondary btn-sm" @click="$emit(\'remove\')"><i class="fa fa-remove fa-lg"></i></button>\
+        <!-- <v-select style="position: relative; left:50%; top:10px; margin-left:-60px; width: 120px;" v-model="selected" :options="[\'foo\',\'bar\']"></v-select> -->\
+      </div>\
     </div>\
   ',
   props: ['imgScr', 'labelName']
@@ -19,11 +26,13 @@ export const Aside = {
     return {
       memo: '',
       cropImgList: []
+      // selected: null
     }
   },
 
   components: {
-    DoneItem
+    DoneItem,
+    vSelect
   },
 
   beforeCreate: function () {

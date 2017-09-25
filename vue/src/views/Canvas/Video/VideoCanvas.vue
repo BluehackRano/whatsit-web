@@ -13,7 +13,7 @@
       <li>
         <h3>{{ currentFrame }} / {{ totalFrames }}</h3>
       </li>
-      <li>
+      <li class="video-canvas-area-li">
         <div id="doodle" ref="doodle" @mousemove="doodleMouseMove($event)" @click="doodleClicked($event)">
           <canvas id="canvas" ref="canvas"></canvas>
         </div>
@@ -1106,9 +1106,9 @@
     /*background-color: #00bf8f;*/
   /*}*/
 
-  #videoCanvasAll {
-    overflow-x: auto;
-  }
+  /*#videoCanvasAll {*/
+    /*overflow-x: auto;*/
+  /*}*/
 
   .output { font-family: monospace; font-weight: bold; }
 
@@ -1121,6 +1121,10 @@
 
   #canvas {
     z-index: 1;
+  }
+
+  .video-canvas-area-li {
+    overflow-x: auto;
   }
 
   .bbox {

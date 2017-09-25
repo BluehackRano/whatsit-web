@@ -35,6 +35,10 @@
 
         <hr class="transparent m-0 py-0">
 
+        <div>
+          <!--<v-select :options="['foo','bar','baz']" :on-change="objectNameSelected"></v-select>-->
+        </div>
+
         <hr class="transparent mx-3 my-0">
         <div class="callout m-0 py-1 text-muted text-center bg-faded text-uppercase">
           <small><b>작업목록</b>
@@ -42,11 +46,15 @@
         </div>
 
         <div
+          class="crop-done-item"
           is="done-item"
           v-for="(croppedImg, index) in cropImgList"
-          v-bind:key="index"
-          v-bind:labelName="index+1"
-          v-bind:imgScr="croppedImg.cropImg"
+          :key="index"
+          :indexNum="index"
+          :labelName="index+1"
+          :imgScr="croppedImg.cropImg"
+          :selectLabelList="labelList"
+          :labelColor="croppedImg.color"
           v-on:remove="cropImgList.splice(index, 1)"
           v-on:remove="removeCropImage(index)"
         >
@@ -59,18 +67,126 @@
 </template>
 
 <script>
-import {Aside} from './mixins/Aside'
+//import {Aside} from './mixins/Aside'
+
+import bus from '../util/bus'
+
+import Vue from 'vue'
+import vSelect from 'vue-select'
+//Vue.component('v-select', vSelect)
+var DoneItem = Vue.component('done-item', {
+  template: '\
+    <div>\
+      <img style="object-fit: contain; width: 40%; height: 100%; border-right: 1px solid gray;" class="crop-done-item-img" :src="imgScr" alt="No cropped image." />\
+      <div style="position: relative; top:-100px; left: 100px; width: 60%; height: 100%;">\
+        <span style="position: relative; display: inline-block; top:10px; left:10px; width: 10px;"><b>{{ labelName }}</b></span>\
+        <span style="position: relative; top:10px; left:10px; width: 10px;" :style="{ backgroundColor: labelColor }"><b> &nbsp;&nbsp;&nbsp; </b></span>\
+        <button style="position: relative; top:10px; left: 70px;" type="button" class="btn btn-outline-secondary btn-sm" @click="$emit(\'remove\')"><i class="fa fa-remove fa-lg"></i></button>\
+        <!-- <v-select style="position: relative; width: 98%; margin-top: 5px;" :on-change="objectNameSelected" :options="[\'foo\',\'bar\']"></v-select> -->\
+        <select v-model="$store.state.cropImgList[indexNum].label" @change="labelSelectOnChange($event.target.value)" style="margin-top:20px; margin-left:2px; width: 98%">\
+          <option disabled value="" selected>Please select one</option>\
+          <option v-for="label in selectLabelList" :value="label">{{ label }}</option>\
+        </select>\
+      </div>\
+    </div>\
+  ',
+  props: ['indexNum', 'imgScr', 'labelName', 'selectLabelList', 'labelColor'],
+//  components: {
+//    vSelect
+//  },
+
+  methods: {
+    labelSelectOnChange (val) {
+      console.log(this.indexNum + ' : ' + val)
+      this.$store.state.cropImgList[this.indexNum].label = val
+    }
+  }
+})
 
 export default {
   name: 'aside',
-  mixins: [Aside],
+//  mixins: [Aside],
+  data: function () {
+    return {
+      memo: '',
+      cropImgList: [],
+      labelList: ['AAA', 'BBB', 'CCC', 'DDD']
+    }
+  },
+
+  components: {
+    DoneItem
+  },
+
+  beforeCreate: function () {
+    this.$store.watch(this.$store.getters.cropImgList,
+      () => {
+        this.cropImgList = this.$store.state.cropImgList
+        console.log('Aside.vue : Current cropped image list ...')
+        console.log(this.cropImgList)
+      },
+      {
+        deep: true // add this if u need to watch object properties change etc.
+      }
+    )
+  },
   created () {
     document.body.classList.remove('aside-menu-hidden')
+
+    bus.$on('add_image', this.addImage)
+    bus.$on('reset_memo', this.resetMemo)
+  },
+
+  methods: {
+    nextImage: function () {
+      bus.$emit('save_and_next_image', '')
+    },
+
+    addImage: function (cropImg) {
+      console.log('Name: ' + cropImg.name + ' / X: ' + cropImg.x + ' / Y: ' + cropImg.y + ' / W: ' + cropImg.width + ' / H: ' + cropImg.height + ' / Label: ' + cropImg.label + ' / Color : ' + cropImg.color)
+      addCropImage(this.$store, cropImg)
+    },
+
+    removeCropImage: function (index) {
+      this.$store.state.cropImgList.slice(index, 1)
+    },
+
+    resetMemo: function (memo) {
+      this.memo = memo
+    },
+
+    objectNameSelected (val) {
+      console.log(val)
+    },
+
+    labelSelectOnChange (val) {
+      console.log(val)
+    }
   }
+}
+
+function addCropImage (store, cropImg) {
+  return store.dispatch('ADD_CROP_IMAGE', {
+    cropImg: cropImg
+  }).then(() => {
+    console.log('done ADD_CROP_IMAGE in Aside.js')
+  })
 }
 </script>
 
 <style scoped>
+  .crop-done-item {
+    width: 100%;
+    height: 100px;
+    border: 1px solid gray;
+  }
+  .crop-done-item-img {
+    object-fit: contain;
+    width: 40%;
+    height: 100%;
+    border-right: 1px solid gray;
+  }
+
   @media (min-width: 992px) {
     .aside-menu {
 
