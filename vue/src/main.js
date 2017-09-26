@@ -9,6 +9,9 @@ import { createApp } from './app'
 // const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 // document.body.appendChild(bar.$el)
 
+import Modal from './plugins/modal'
+Vue.use(Modal)
+
 Vue.mixin({
   beforeRouteUpdate (to, from, next) {
     const { asyncData } = this.$options

@@ -3,7 +3,7 @@ let aw = new WhatsIt()
 let awProject = aw.getProject()
 
 import bus from '../../../util/bus'
-import { getColor } from '../../../util/labelColors'
+import { getLabelColor, clearLabelColor } from '../../../util/labelColors'
 
 var imgList = [
   { uri: '/static/img/bg3.jpeg' },
@@ -101,6 +101,12 @@ export const Dashboard = {
     saveAndNextImage () {
       window.alert(this.$store.state.cropImgList)
 
+      /* Test Code */
+      this.resetCanvas()
+      this.resetCropImgListState()
+      clearLabelColor()
+      return
+
       ++this.rawImgIndex
       if (this.rawImgIndex == this.rawImgList.length) {
         this.resetRawImgListState()
@@ -113,6 +119,7 @@ export const Dashboard = {
 
       this.resetCanvas()
       this.resetCropImgListState()
+      clearLabelColor()
     },
 
     addImage () {
@@ -140,8 +147,18 @@ export const Dashboard = {
           cropBoxWidth: cropBoxData.width,
           cropBoxHeight: cropBoxData.height,
           label: '',
-          color: getColor()
+          color: getLabelColor()
         })
+    },
+
+    resetRawImgListState () {
+      while (this.$store.state.rawImgList.length > 0) {
+        this.$store.state.rawImgList.pop()
+      }
+
+      this.resetCanvas()
+      this.resetCropImgListState()
+      clearLabelColor()
     },
 
     resetCanvas () {
@@ -153,15 +170,6 @@ export const Dashboard = {
       this.cropImgWidth = '0'
       this.cropImgHeight = '0'
       this.$refs.cropper.clear()
-    },
-
-    resetRawImgListState () {
-      while (this.$store.state.rawImgList.length > 0) {
-        this.$store.state.rawImgList.pop()
-      }
-
-      this.resetCanvas()
-      this.resetCropImgListState()
     },
 
     resetCropImgListState () {

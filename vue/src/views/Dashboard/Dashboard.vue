@@ -3,7 +3,7 @@
 
     <canvas id="bg_canvas" style="position: absolute; z-index: 2;"></canvas>
 
-    <div style="max-width: 80%; display: inline-block; z-index: 1;">
+    <div style="max-width: 80%; display: inline-block; z-index: 1; overflow-x: auto;">
       <VueCropper
         ref="cropper"
         :guides="true"

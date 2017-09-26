@@ -65,6 +65,7 @@
         this.$router.push('/project/createProject')
       },
       projectClicked: function (projectId) {
+//        this.$modal.open('알림', 'Project ID : ' + projectId, '닫기')
         this.$router.push({ path: '/project/' + projectId + '/datasets' })
       },
       exportButtonClicked: function (event, projectId) {

@@ -51,11 +51,9 @@
           v-for="(croppedImg, index) in cropImgList"
           :key="index"
           :indexNum="index"
-          :labelName="index+1"
           :imgScr="croppedImg.cropImg"
           :selectLabelList="labelList"
           :labelColor="croppedImg.color"
-          v-on:remove="cropImgList.splice(index, 1)"
           v-on:remove="removeCropImage(index)"
         >
         </div>
@@ -67,9 +65,8 @@
 </template>
 
 <script>
-//import {Aside} from './mixins/Aside'
-
 import bus from '../util/bus'
+import { returnLabelColor } from '../util/labelColors'
 
 import Vue from 'vue'
 import vSelect from 'vue-select'
@@ -79,8 +76,8 @@ var DoneItem = Vue.component('done-item', {
     <div>\
       <img style="object-fit: contain; width: 40%; height: 100%; border-right: 1px solid gray;" class="crop-done-item-img" :src="imgScr" alt="No cropped image." />\
       <div style="position: relative; top:-100px; left: 100px; width: 60%; height: 100%;">\
-        <span style="position: relative; display: inline-block; top:10px; left:10px; width: 10px;"><b>{{ labelName }}</b></span>\
-        <span style="position: relative; top:10px; left:10px; width: 10px;" :style="{ backgroundColor: labelColor }"><b> &nbsp;&nbsp;&nbsp; </b></span>\
+        <span style="position: relative; display: inline-block; top:10px; left:10px; width: 10px;"><b>{{ indexNum+1 }}</b></span>\
+        <span style="position: relative; top:10px; left:15px; width: 10px;" :style="{ backgroundColor: labelColor }"><b> &nbsp;&nbsp;&nbsp; </b></span>\
         <button style="position: relative; top:10px; left: 70px;" type="button" class="btn btn-outline-secondary btn-sm" @click="$emit(\'remove\')"><i class="fa fa-remove fa-lg"></i></button>\
         <!-- <v-select style="position: relative; width: 98%; margin-top: 5px;" :on-change="objectNameSelected" :options="[\'foo\',\'bar\']"></v-select> -->\
         <select v-model="$store.state.cropImgList[indexNum].label" @change="labelSelectOnChange($event.target.value)" style="margin-top:20px; margin-left:2px; width: 98%">\
@@ -90,11 +87,7 @@ var DoneItem = Vue.component('done-item', {
       </div>\
     </div>\
   ',
-  props: ['indexNum', 'imgScr', 'labelName', 'selectLabelList', 'labelColor'],
-//  components: {
-//    vSelect
-//  },
-
+  props: ['indexNum', 'imgScr', 'selectLabelList', 'labelColor'],
   methods: {
     labelSelectOnChange (val) {
       console.log(this.indexNum + ' : ' + val)
@@ -148,6 +141,8 @@ export default {
     },
 
     removeCropImage: function (index) {
+      returnLabelColor(this.cropImgList[index].color)
+      this.cropImgList.splice(index, 1)
       this.$store.state.cropImgList.slice(index, 1)
     },
 

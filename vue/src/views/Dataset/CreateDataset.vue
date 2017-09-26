@@ -7,10 +7,10 @@
 
     <div>
       <label>
-        <input type="radio" value="video-dataset" v-model="datasetType" checked> Video Link
+        <input type="radio" value="video-dataset" v-model="datasetType"> Video Link
       </label><br>
       <label>
-        <input type="radio" value="image-dataset" v-model="datasetType" disabled> Image Link
+        <input type="radio" value="image-dataset" v-model="datasetType"> Image Link
       </label>
     </div>
 
@@ -37,9 +37,20 @@
     },
     methods: {
       nextButtonClicked: function () {
-        // todo
+        if (!datasetType) {
+          this.$modal.open('알림', 'Dataset Type을 선택하세요.', '닫기')
+          return
+        }
+        if ('' === datasetType.trim()) {
+          this.$modal.open('알림', 'Dataset Type을 선택하세요.', '닫기')
+          return
+        }
+
+        console.log(datasetType)
         // if video dataset
-        this.$router.replace({ path: '/project/' + this.projectId + '/dataset/video' })
+        if (datasetType === 'video-dataset') {
+          this.$router.replace({ path: '/project/' + this.projectId + '/dataset/video' })
+        }
       },
       cancelDataset: function () {
         this.$router.replace({ path: '/project/' + this.projectId + '/datasets' })
