@@ -11,7 +11,7 @@
 
     <div class="dataset-list">
       <div class="animated fadeIn">
-        <div class="col-sm-12 col-md-12 dataset-item" v-for="dataset in datasetList" @click="datasetClicked(dataset._id)" :key="dataset._id">
+        <div class="col-sm-12 col-md-12 dataset-item" v-for="dataset in datasetList" @click="datasetClicked(dataset._id, dataset.type)" :key="dataset._id">
           <div class="dataset-name">
             {{ dataset.name }}
           </div>
@@ -69,11 +69,16 @@
       createDatasetButtonClicked: function () {
         this.$router.push('/project/' + this.projectId + '/createDataset')
       },
-      datasetClicked: function (datasetId) {
-        console.log('Dataset ID : ' + datasetId)
-//        alert('Dataset ID : ' + datasetId)
-//        window.open('/canvas/video/' + datasetId)
-        window.open('/dashboard')
+      datasetClicked: function (datasetId, type) {
+        console.log(`Dataset ID : ${datasetId} / Type : ${type}`)
+
+        if (type === 'video') {
+          window.open('/canvas/video/' + datasetId)
+        } else if (type === 'bigquery') {
+          window.open(`/canvas/bigquery/${this.projectId}/${datasetId}`)
+        } else {
+          this.$modal.open('알림', '잘못된 형식의 Dataset 입니다.\n(Dataset Type 없음)', '확인')
+        }
       },
       deleteDatasetButtonClicked: function (datasetId, event) {
         event.stopPropagation()
@@ -85,8 +90,17 @@
           projectId: this.projectId
         }).then(() => {
           console.log('done FETCH_DATASETS in Datasets.vue')
+          this.requestFetchProjectLabels()
         })
-      }
+      },
+      requestFetchProjectLabels () {
+        this.$store.dispatch('FETCH_PROJECT_LABELS', {
+          projectId: this.projectId
+        }).then(() => {
+          console.log('done FETCH_PROJECT_LABELS in Datasets.vue')
+          console.log(this.$store.state.projectLabelList)
+        })
+      },
     }
   }
 </script>

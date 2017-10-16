@@ -1,12 +1,6 @@
 <template>
   <div id="projects-container">
     <div class="animated fadeIn">
-
-      <!--'/static/img/bg3.jpeg',-->
-  <!--'/static/img/bg1.jpg',-->
-  <!--'/static/img/logo-w.png',-->
-  <!--'/static/img/bg2.jpg',-->
-
       <div class="row">
 
         <div class="col-sm-6 col-md-4">

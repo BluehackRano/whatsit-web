@@ -1,18 +1,18 @@
 <template>
   <transition name="modal">
-    <div class="modal-mask" v-if="isShowModal">
-      <div class="modal-wrapper">
-        <div class="modal-container">
-          <div class="modal-header">
+    <div class="rano-modal-mask" v-if="isShowModal">
+      <div class="rano-modal-wrapper">
+        <div class="rano-modal-container">
+          <div class="rano-modal-header">
             {{ title}}
           </div>
 
-          <div class="modal-body">
+          <div class="rano-modal-body">
             {{ body }}
           </div>
 
-          <div class="modal-footer">
-            <button class="modal-button" @click="close">
+          <div class="rano-modal-footer">
+            <button class="rano-modal-button" @click="close">
               {{ closeButton }}
             </button>
           </div>
@@ -48,7 +48,7 @@
 </script>
 
 <style scoped>
-  .modal-mask {
+  .rano-modal-mask {
     position: fixed;
     z-index: 10000;
     top: 0;
@@ -60,13 +60,13 @@
     transition: opacity .3s;
   }
 
-  .modal-wrapper {
+  .rano-modal-wrapper {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
   }
 
-  .modal-container {
+  .rano-modal-container {
     width: 300px;
     margin: 0 auto;
     padding-top: 50px;
@@ -75,17 +75,17 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
 
-  .modal-header {
+  .rano-modal-header {
     font-weight: bold;
     font-size: 13pt;
   }
 
-  .modal-body {
+  .rano-modal-body {
     margin: 16px 0 50px 0;
     font-size: 12pt;
   }
 
-  .modal-button {
+  .rano-modal-button {
     width: 100%;
     height: 50px;
     text-align: center;

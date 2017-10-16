@@ -34,7 +34,7 @@
     "vue-strap": "github:wffranco/vue-strap",
     "vuex": "^2.3.1",
     "vuex-router-sync": "^4.1.2",
-    "whatsit-sdk-js": "0.0.16"
+    "whatsit-sdk-js": "0.0.18"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",

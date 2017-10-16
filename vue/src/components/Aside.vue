@@ -74,8 +74,8 @@ import vSelect from 'vue-select'
 var DoneItem = Vue.component('done-item', {
   template: '\
     <div>\
-      <img style="object-fit: contain; width: 40%; height: 100%; border-right: 1px solid gray;" class="crop-done-item-img" :src="imgScr" alt="No cropped image." />\
-      <div style="position: relative; top:-100px; left: 100px; width: 60%; height: 100%;">\
+      <!--<img style="object-fit: contain; width: 40%; height: 100%; border-right: 1px solid gray;" class="crop-done-item-img" :src="imgScr" alt="No cropped image." crossorigin="anonymous"/>-->\
+      <div style="position: relative; top:0; left: 0; width: 100%;  /*top:-100px; left: 100px; width: 60%;*/ height: 100%;">\
         <span style="position: relative; display: inline-block; top:10px; left:10px; width: 10px;"><b>{{ indexNum+1 }}</b></span>\
         <span style="position: relative; top:10px; left:15px; width: 10px;" :style="{ backgroundColor: labelColor }"><b> &nbsp;&nbsp;&nbsp; </b></span>\
         <button style="position: relative; top:10px; left: 70px;" type="button" class="btn btn-outline-secondary btn-sm" @click="$emit(\'remove\')"><i class="fa fa-remove fa-lg"></i></button>\
@@ -103,7 +103,7 @@ export default {
     return {
       memo: '',
       cropImgList: [],
-      labelList: ['AAA', 'BBB', 'CCC', 'DDD']
+      labelList: []
     }
   },
 
@@ -127,12 +127,13 @@ export default {
     document.body.classList.remove('aside-menu-hidden')
 
     bus.$on('add_image', this.addImage)
-    bus.$on('reset_memo', this.resetMemo)
+    bus.$on('reset_labels', this.resetLabelList)
+//    this.labelList = this.$store.state.projectLabelList
   },
 
   methods: {
     nextImage: function () {
-      bus.$emit('save_and_next_image', '')
+      bus.$emit('save_and_next_image', this.cropImgList)
     },
 
     addImage: function (cropImg) {
@@ -146,8 +147,19 @@ export default {
       this.$store.state.cropImgList.slice(index, 1)
     },
 
-    resetMemo: function (memo) {
-      this.memo = memo
+    resetLabelList (labelList) {
+//      this.labelList = this.$store.state.projectLabelList
+      this.labelList.splice(0, this.labelList.length)
+
+      this.labelList = labelList[0].split(',')
+      this.resetMemo()
+    },
+
+    resetMemo: function () {
+      this.memo = ''
+      for (let i = 0; i < this.labelList.length; i++) {
+        this.memo += `${this.labelList[i]}, `
+      }
     },
 
     objectNameSelected (val) {

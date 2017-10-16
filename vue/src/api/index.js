@@ -196,11 +196,14 @@ export function addDataset (dataset) {
 }
 
 // /datasets/{datasetId} GET
-export function fetchDataset (datasetId) {
+export function fetchDataset (datasetId, count) {
   return new Promise ((resolve, reject) => {
     var whatsit = new WhatsIt({})
     console.log('getDataset API ')
-    console.log(datasetId)
+    console.log(`datasetId : ${datasetId}`)
+    if (count) {
+      console.log(`count : ${count}`)
+    }
     whatsit.getDataset().getDatasetByDatasetId(datasetId).then(res => {
       if (res != null) {
         console.log(res.data.data.data[0])
@@ -220,7 +223,9 @@ export function updateDataset (options, datasetId) {
     console.log('putDataset API ')
     console.log(options)
     console.log(datasetId)
-    whatsit.getDataset().putDataset(options, datasetId).then(res => {
+
+    whatsit.getDataset().updateDatasetContent(options, datasetId).then(res => {
+    // whatsit.getDataset().putDataset(options, datasetId).then(res => {
       if (res != null) {
         console.log(res)
         resolve(res.data)
@@ -231,6 +236,42 @@ export function updateDataset (options, datasetId) {
     })
   })
 }
+
+// /datasets/{datasetId}/contents GET
+export function fetchDatasetContents (datasetId, options) {
+  return new Promise ((resolve, reject) => {
+    var whatsit = new WhatsIt({})
+    console.log(`getDatasetContents API\n datasetId : ${datasetId}\n options : ${JSON.stringify(options)}`)
+    whatsit.getDataset().getDatasetContent(options, datasetId).then(res => {
+      if (res != null) {
+        console.log(res.data.data)
+        resolve(res.data.data)
+      }
+    }).catch(err => {
+      console.error(err)
+      reject(err)
+    })
+  })
+}
+
+// /datasets/{datasetId} PUT
+// export function updateDataset (options, datasetId) {
+//   return new Promise ((resolve, reject) => {
+//     var whatsit = new WhatsIt({})
+//     console.log('putDataset API ')
+//     console.log(options)
+//     console.log(datasetId)
+//     whatsit.getDataset().putDataset(options, datasetId).then(res => {
+//       if (res != null) {
+//         console.log(res)
+//         resolve(res.data)
+//       }
+//     }).catch(err => {
+//       console.error(err)
+//       reject(err)
+//     })
+//   })
+// }
 
 export function fetchRepos(token) {
   return new Promise ((resolve, reject) => {

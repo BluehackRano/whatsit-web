@@ -16,7 +16,8 @@ import {
   fetchDatasets,
   fetchDataset,
   addDataset,
-  updateDataset
+  updateDataset,
+  fetchDatasetContents
 } from '../api'
 
 export default {
@@ -86,8 +87,20 @@ export default {
     return fetchProjects(userId)
       .then(projects => {
         console.log('FETCH_PROJECTS then in actions.js')
+        console.log(projects)
         commit('SET_PROJECTS', { projects })
       })
+  },
+
+  FETCH_PROJECT_LABELS: ({ commit }, { projectId }) => {
+    let labels = ['shirts', 'pants', 'skirt', 'ETC']
+    console.log(`FETCH_PROJECT_LABELS then in actions.js : ${projectId}`)
+    commit('SET_PROJECT_LABELS', { labels })
+    // return fetchProjectLabels(projectId)
+    //   .then(labels => {
+    //     console.log('FETCH_PROJECT_LABELS then in actions.js')
+    //     commit('SET_PROJECT_LABELS', { labels })
+    //   })
   },
 
   ADD_PROJECT: ({ commit, dispatch, state }, { options }) => {
@@ -121,8 +134,8 @@ export default {
       })
   },
 
-  FETCH_DATASET: ({ commit, dispatch, state }, { datasetId }) => {
-    return fetchDataset(datasetId)
+  FETCH_DATASET: ({ commit, dispatch, state }, { datasetId, count }) => {
+    return fetchDataset(datasetId, count)
       .then(currentDataset => {
         console.log('FETCH_DATASET then in actions.js')
         commit('SET_DATASET', { currentDataset })
@@ -130,6 +143,21 @@ export default {
   },
 
   UPDATE_DATASET: ({ commit, dispatch, state }, { options, datasetId }) => {
+    return updateDataset(options, datasetId)
+      .then(res => {
+        console.log('UPDATE_DATASET then in actions.js')
+      })
+  },
+
+  FETCH_DATASET_CONTENTS: ({ commit, dispatch, state }, { datasetId, options }) => {
+    return fetchDatasetContents(datasetId, options)
+      .then(datasetContents => {
+        console.log('FETCH_DATASET_CONTENTS then in actions.js')
+        commit('SET_DATASET_CONTENTS', { datasetContents })
+      })
+  },
+
+  UPDATE_DATASET_CONTENTS: ({ commit, dispatch, state }, { options, datasetId }) => {
     return updateDataset(options, datasetId)
       .then(res => {
         console.log('UPDATE_DATASET then in actions.js')

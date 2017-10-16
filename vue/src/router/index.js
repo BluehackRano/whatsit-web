@@ -13,6 +13,7 @@ import CreateProject from 'views/Project/CreateProject'
 import Datasets from 'views/Dataset/Datasets'
 import CreateDataset from 'views/Dataset/CreateDataset'
 import AddVideoDataset from 'views/Dataset/Video/AddVideoDataset'
+import AddBigQueryDataset from 'views/Dataset/BigQuery/AddBigQueryDataset'
 import VideoCanvas from 'views/Canvas/Video/VideoCanvas'
 import InstanceDetail from 'views/DashboardVues//InstanceDetail'
 import AddProject from 'views/ProjectsVues/AddProject'
@@ -147,13 +148,32 @@ export function createRouter () {
                         component: AddVideoDataset
                       }
                     ]
+                  },
+                  {
+                    path: 'dataset/bigQuery',
+                    redirect: 'dataset/bigQuery/add',
+                    component: {
+                      render (c) { return c('router-view') }
+                    },
+                    children: [
+                      {
+                        path: 'add',
+                        name: 'AddBigQueryDataset',
+                        component: AddBigQueryDataset
+                      }
+                    ]
                   }
                 ]
               }
             ]
           },
+          // {
+          //   path: 'dashboard',
+          //   name: 'Dashboard',
+          //   component: Dashboard
+          // },
           {
-            path: 'dashboard',
+            path: 'canvas/bigquery/:projectId/:datasetId',
             name: 'Dashboard',
             component: Dashboard
           },

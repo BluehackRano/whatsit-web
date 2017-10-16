@@ -4,7 +4,7 @@
     <div class="app-body">
       <!--<Sidebar/>-->
       <main class="main">
-        <breadcrumb class="mb-0" :list="list"/>
+        <!--<breadcrumb class="mb-0" :list="list"/>-->
         <div class="container-fluid">
           <router-view></router-view>
         </div>
@@ -20,7 +20,7 @@
 <script>
 import AppHeader from '../../components/Header.vue'
 // import Sidebar from '../../components/Sidebar.vue'
-import Breadcrumb from '../../components/Breadcrumb.vue'
+//import Breadcrumb from '../../components/Breadcrumb.vue'
 import AppAside from '../../components/Aside'
 import AppFooter from '../../components/Footer'
 import {Full} from './mixins/Full'
@@ -38,7 +38,7 @@ export default {
   components: {
     AppHeader,
     // Sidebar,
-    Breadcrumb,
+//    Breadcrumb,
     AppAside,
     AppFooter
   },

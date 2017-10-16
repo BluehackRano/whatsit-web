@@ -12,6 +12,7 @@
         :zoomable="false"
         :movable="false"
         :toggleDragModeOnDblclick="false"
+        :checkCrossOrigin="false"
         :minContainerWidth="500"
         :minContainerHeight="500"
         :minCanvasWidth="500"
@@ -56,12 +57,28 @@ export default {
   name: 'dashboard',
   mixins: [Dashboard],
 
+  data () {
+    return {
+      projectId: ''
+    }
+  },
+
   components: {
     VueCropper
   },
 
   created () {
     bus.$emit('is_image_canvas', true)
+
+    this.projectId = this.$route.params.projectId
+    if (this.projectId === '' || this.projectId === null || this.projectId === undefined) {
+      return
+    }
+  },
+
+  beforeMount () {
+    // call the getLabels GET api
+//    this.requestFetchProjectLabels()
   },
 
   beforeDestry () {
@@ -118,7 +135,18 @@ export default {
 
       this.setDivAddImgPosition()
       this.hideDivAddImg(false)
-    }
+    },
+
+    requestFetchProjectLabels () {
+      this.$store.dispatch('FETCH_PROJECT_LABELS', {
+        projectId: this.projectId
+      }).then(() => {
+        console.log('done FETCH_PROJECT_LABELS in Datasets.vue')
+        console.log(this.$store.state.projectLabelList)
+
+        bus.$emit('reset_labels')
+      })
+    },
   }
 }
 </script>

@@ -1,5 +1,4 @@
 var colorList = [
-  { color: 'black', used: false },
   { color: 'red', used: false },
   { color: 'orange', used: false },
   { color: 'green', used: false },
@@ -8,12 +7,13 @@ var colorList = [
   { color: 'MediumAquaMarine', used: false },
   { color: 'MediumVioletRed', used: false },
   { color: 'YellowGreen', used: false },
+  { color: 'Navy', used: false },
   { color: 'DarkKhaki', used: false },
   { color: 'DarkRed', used: false },
   { color: 'pink', used: false },
-  { color: 'DarkOliveGreen', used: false },
+  { color: 'Gold', used: false },
   { color: 'CornflowerBlue', used: false },
-  { color: 'Navy', used: false }
+  { color: 'black', used: false }
 ]
 
 export function getLabelColor () {

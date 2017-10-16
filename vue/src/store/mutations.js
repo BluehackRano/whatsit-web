@@ -61,6 +61,17 @@ export default {
     })
   },
 
+  SET_PROJECT_LABELS: (state, { labels }) => {
+    state.projectLabelList.splice(0, state.projectLabelList.length)
+    console.log('SET_PROJECT_LABELS')
+    console.log(labels)
+    labels.forEach(label => {
+      if (label) {
+        state.projectLabelList.push(label)
+      }
+    })
+  },
+
   SET_DATASETS: (state, { datasets }) => {
     state.datasetList.splice(0, state.datasetList.length)
     datasets.forEach(dataset => {
@@ -73,6 +84,15 @@ export default {
 
   SET_DATASET: (state, { currentDataset }) => {
     state.currentDataset = currentDataset
+  },
+
+  SET_DATASET_CONTENTS: (state, { datasetContents }) => {
+    state.datasetContentList.splice(0, state.datasetContentList.length)
+    datasetContents.forEach(datasetContent => {
+      if (datasetContent) {
+        state.datasetContentList.push(datasetContent)
+      }
+    })
   },
 
   SET_USER: (state, { id, user }) => {

@@ -7,10 +7,10 @@
 
     <div>
       <label>
-        <input type="radio" value="video-dataset" v-model="datasetType"> Video Link
+        <input type="radio" value="video-dataset" v-model="datasetType"> Video
       </label><br>
       <label>
-        <input type="radio" value="image-dataset" v-model="datasetType"> Image Link
+        <input type="radio" value="bigquery-dataset" v-model="datasetType"> BigQuery
       </label>
     </div>
 
@@ -37,19 +37,17 @@
     },
     methods: {
       nextButtonClicked: function () {
-        if (!datasetType) {
-          this.$modal.open('알림', 'Dataset Type을 선택하세요.', '닫기')
-          return
-        }
-        if ('' === datasetType.trim()) {
-          this.$modal.open('알림', 'Dataset Type을 선택하세요.', '닫기')
+        if (!this.datasetType || '' === this.datasetType.trim()) {
+          this.$modal.open('알림', 'Dataset Type을 선택하세요.', '확인')
           return
         }
 
-        console.log(datasetType)
-        // if video dataset
-        if (datasetType === 'video-dataset') {
+        console.log(this.datasetType)
+
+        if (this.datasetType === 'video-dataset') {
           this.$router.replace({ path: '/project/' + this.projectId + '/dataset/video' })
+        } else if (this.datasetType === 'bigquery-dataset') {
+          this.$router.replace({ path: '/project/' + this.projectId + '/dataset/bigQuery' })
         }
       },
       cancelDataset: function () {

@@ -6,10 +6,10 @@ import bus from '../../../util/bus'
 import { getLabelColor, clearLabelColor } from '../../../util/labelColors'
 
 var imgList = [
-  { uri: '/static/img/bg3.jpeg' },
-  { uri: '/static/img/bg1.jpg' },
-  { uri: '/static/img/logo-w.png' },
-  { uri: '/static/img/bg2.jpg' },
+  { _id: 'aaaa', uri: 'http://img.ssfshop.com/details/8SBR/17/07/14/750_GM0017071478415_P_1_20170718181636.jpg' },
+  { _id: 'bbbb', uri: 'http://img.ssfshop.com/details/8SBR/17/08/22/750_GM0017082282439_M_5_20170905154856.jpg' },
+  { _id: 'cccc', uri: 'http://img.ssfshop.com/details/8SBR/17/02/09/750_GM0017020964499_C_2_20170515115748.jpg' },
+  // { _id: 'dddd', uri: '/static/img/bg2.jpg' },
 ]
 var imgIndex=0
 
@@ -17,9 +17,11 @@ export const Dashboard = {
 
   data: function () {
     return {
+      datasetId: '',
+      currentDataset: null,
       bgCanvas: null,
       rawImgList: [],
-      rawImgIndex: 0,
+      rawImgIndex: -1,
       imgSrc: null,
       cropImg: '',
       cropImgX: '0',
@@ -48,7 +50,7 @@ export const Dashboard = {
     bus.$on('save_and_next_image', this.saveAndNextImage)
 
     /* Test Code */
-    this.resetImageList()
+    // this.resetImageList()
 
     /* Original Code */
     // this.$store.watch(this.$store.getters.userId,
@@ -66,27 +68,56 @@ export const Dashboard = {
     //     this.resetImageList()
     //   }
     // )
+
+    this.datasetId = this.$route.params.datasetId
+    if (this.datasetId === '' || this.datasetId === null || this.datasetId === undefined) {
+      return
+    }
+    console.log(`DATASET_ID on DASHBOARD : ${this.datasetId}`)
+
+
   },
 
   mounted: function () {
     this.bgCanvas = document.getElementById('bg_canvas')
     this.divAddImg = document.getElementById('div_add_img')
+
+    // call the getDataset GET api
+    this.$store.watch(this.$store.getters.userId,
+      () => {
+        this.resetRawImgListState()
+        // fetchRawImages(this.$store)
+        this.requestGetDatasetContents()
+      },
+      {
+        deep: true // add this if u need to watch object properties change etc.
+      }
+    )
+
+    this.$store.watch(this.$store.getters.datasetContentList,
+      () => {
+        this.resetImageList()
+      }
+    )
   },
 
   methods: {
     resetImageList () {
       /* Test Code */
-      this.rawImgList = imgList
+      if (this.rawImgIndex == 0) {
+        return
+      }
+
+      this.rawImgList = this.$store.state.datasetContentList // imgList // this.$store.state.datasetContentList
       this.rawImgIndex = 0
       this.imgSrc = this.rawImgList[0].uri
+      // console.log('cropper')
+      // console.log(this.$refs.cropper)
 
-      /* Original Code */
-      // this.rawImgList = this.$store.state.rawImgList
-      // this.rawImgIndex = 0
-      // this.imgSrc = this.rawImgList[0].uri
       this.$refs.cropper.replace(this.imgSrc)
 
-      bus.$emit('reset_memo', this.rawImgList[0].labels[0])
+      bus.$emit('reset_labels', this.rawImgList[0].labels)
+      // bus.$emit('reset_memo', this.rawImgList[0].labels[0])
     },
 
     toAddProject () {
@@ -98,24 +129,31 @@ export const Dashboard = {
       this.setBgCanvasRect()
     },
 
-    saveAndNextImage () {
+    saveAndNextImage (markedImgList) {
       window.alert(this.$store.state.cropImgList)
 
-      /* Test Code */
-      this.resetCanvas()
-      this.resetCropImgListState()
-      clearLabelColor()
-      return
+      this.requestUpdateDataset(this.$refs.cropper.cropper.canvasData)
 
+      /* Test Code */
+      // this.resetCanvas()
+      // this.resetCropImgListState()
+      // clearLabelColor()
+      //
+      // return
+
+      /* Original Code */
       ++this.rawImgIndex
       if (this.rawImgIndex == this.rawImgList.length) {
         this.resetRawImgListState()
-        fetchRawImages(this.$store)
+        // fetchRawImages(this.$store)
+        this.requestGetDatasetContents()
         return
       }
       this.imgSrc = this.rawImgList[this.rawImgIndex].uri
+      // this.imgSrc = this.rawImgList[this.rawImgIndex]
       this.$refs.cropper.replace(this.imgSrc)
-      bus.$emit('reset_memo', this.rawImgList[this.rawImgIndex].labels[0])
+      bus.$emit('reset_labels', this.rawImgList[this.rawImgIndex].labels)
+      // bus.$emit('reset_memo', this.rawImgList[this.rawImgIndex].labels[0])
 
       this.resetCanvas()
       this.resetCropImgListState()
@@ -123,11 +161,12 @@ export const Dashboard = {
     },
 
     addImage () {
-      this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL()
-
-      if (this.cropImg === undefined || this.cropImg === null || this.cropImg === '') {
-        return
-      }
+      console.log(this.$refs.cropper.getCroppedCanvas())
+      // this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL('image/jpeg')
+      //
+      // if (this.cropImg === undefined || this.cropImg === null || this.cropImg === '') {
+      //   return
+      // }
 
       if (this.cropImgWidth === 0 || this.cropImgHeight === 0 || this.cropImgWidth === '0' || this.cropImgHeight === '0') {
         return
@@ -225,7 +264,109 @@ export const Dashboard = {
         this.divAddImg.style.display = 'inline'
         this.divAddImg.style.visibility = 'visible'
       }
+    },
+
+    requestGetDatasetContents () {
+
+      let options = {
+        count: 3
+      }
+
+      return this.$store.dispatch('FETCH_DATASET_CONTENTS', {
+        datasetId: '59cdc6c9c92eec000f5a32b4', // this.datasetId,
+        options: options
+      }).then(() => {
+        console.log('done FETCH_DATASET_CONTENTS in Dashboard.js')
+        console.log(this.$store.state.currentDataset)
+        this.currentDataset = this.$store.state.currentDataset
+        // this.fetchRawImages()
+      })
+    },
+
+    fetchRawImages () {
+      this.currentDataset.imgUrl.forEach((rawImg) => {
+        this.$store.commit('SET_RAW_IMAGE_LIST', { rawImg })
+      })
+    },
+
+    requestUpdateDataset (canvasData) {
+
+      // generateUpdateRequest
+      let req = this.generateUpdateRequest(canvasData)
+      console.log('generateUpdateRequest')
+      console.log(JSON.stringify(req))
+
+      // requestUpdateDataset API
+      return this.$store.dispatch('UPDATE_DATASET', {
+        options: req,
+        datasetId: '59cdc6c9c92eec000f5a32b4' // this.datasetId //
+      }).then(() => {
+        console.log('done UPDATE_DATASET in VideoCanvas.vue')
+      })
+    },
+
+    generateUpdateRequest: function (canvasData) {
+
+      let markedImgList = this.$store.state.cropImgList
+
+      var imageObject
+      var imageObjectList = []
+      var objectObject
+      var objectObjectList
+      var objectLabelList
+      var labels = []
+
+      imageObject = new Object()
+      imageObject.imageId = this.rawImgList[this.rawImgIndex]._id
+      imageObject.uri = this.rawImgList[this.rawImgIndex].uri
+      // imageObject.name = this.currentDataset.images[frameNumber].name
+      imageObject.segmented = 0
+      imageObject.w = canvasData.naturalWidth
+      imageObject.h = canvasData.naturalHeight
+
+      objectObjectList = []
+      objectLabelList = []
+      let annotatedObject
+      for (let i = 0; i < markedImgList.length; i++) {
+        annotatedObject = markedImgList[i]
+        console.log(' - ' + annotatedObject.name + ' - ')
+
+        objectObject = new Object()
+        objectObject.type = 'polygon'
+        objectObject.polygons = [
+          [annotatedObject.cropBoxLeft, annotatedObject.cropBoxTop],
+          [annotatedObject.cropBoxLeft + annotatedObject.cropBoxWidth, annotatedObject.cropBoxTop],
+          [annotatedObject.cropBoxLeft + annotatedObject.cropBoxWidth, annotatedObject.cropBoxTop + annotatedObject.cropBoxHeight],
+          [annotatedObject.cropBoxLeft, annotatedObject.cropBoxTop + annotatedObject.cropBoxHeight],
+        ]
+        objectObject.difficult = 0
+        objectObject.occluded = 0
+        objectObject.label = annotatedObject.label
+        objectObject.pose = 'Unspecified'
+
+        objectObjectList.push(objectObject)
+        objectLabelList.push(annotatedObject.label)
+      }
+
+      imageObject.objects = objectObjectList
+      // imageObject.labels = objectLabelList // tags
+
+      imageObjectList.push(imageObject)
+
+      var dataObject = {
+        images: imageObjectList
+      }
+
+      var reqDataObjectList = []
+      reqDataObjectList.push(dataObject)
+
+      var req = {
+        type: 'bigquery',
+        data: reqDataObjectList
+      }
+      return req
     }
+
   }
 }
 
